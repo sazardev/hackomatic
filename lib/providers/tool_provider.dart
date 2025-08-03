@@ -86,4 +86,9 @@ class ToolProvider with ChangeNotifier {
       return null;
     }
   }
+
+  // Método público para refrescar herramientas
+  Future<void> refreshTools() async {
+    await _loadTools();
+  }
 }

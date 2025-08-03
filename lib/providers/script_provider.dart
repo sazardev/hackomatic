@@ -169,4 +169,9 @@ class ScriptProvider with ChangeNotifier {
 
     return parameters;
   }
+
+  // Método público para refrescar scripts
+  Future<void> refreshScripts() async {
+    await _loadScripts();
+  }
 }

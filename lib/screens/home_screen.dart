@@ -7,11 +7,11 @@ import '../providers/task_provider.dart';
 import '../providers/bluetooth_provider.dart';
 import '../providers/platform_provider.dart';
 import '../utils/theme.dart';
+import '../widgets/enhanced_custom_app_bar.dart';
 import 'tools_screen.dart';
 import 'scripts_screen.dart';
 import 'tasks_screen.dart';
 import 'bluetooth_screen.dart';
-import 'settings_screen.dart';
 import 'advanced_initializer_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -32,48 +32,126 @@ class _HomeScreenState extends State<HomeScreen> {
     const BluetoothScreen(),
   ];
 
+  final List<String> _sectionNames = [
+    'Dashboard',
+    'Tools',
+    'Scripts',
+    'Tasks',
+    'Bluetooth',
+  ];
+
+  List<EnhancedBreadcrumbItem> _getBreadcrumbs() {
+    const Map<int, Map<String, dynamic>> sectionData = {
+      0: {'icon': Icons.dashboard, 'route': '/dashboard'},
+      1: {'icon': Icons.build, 'route': '/tools'},
+      2: {'icon': Icons.code, 'route': '/scripts'},
+      3: {'icon': Icons.task, 'route': '/tasks'},
+      4: {'icon': Icons.bluetooth, 'route': '/bluetooth'},
+    };
+
+    return [
+      EnhancedBreadcrumbItem(
+        title: _sectionNames[_currentIndex],
+        route: sectionData[_currentIndex]?['route'] ?? '/',
+        icon: sectionData[_currentIndex]?['icon'] ?? Icons.home,
+        isActive: true,
+        onTap: null, // Ya estamos aquí
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('HACKOMATIC'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SettingsScreen()),
-              );
-            },
-          ),
-        ],
+      extendBodyBehindAppBar: false,
+      appBar: EnhancedHackomaticAppBar(
+        currentSection: _sectionNames[_currentIndex],
+        breadcrumbs: _getBreadcrumbs(),
+        showRealTimeStats: true,
+        showNotifications: true,
+        showQuickActions: true,
+        onMenuPressed: () {
+          _refreshCurrentScreen();
+        },
       ),
       body: _screens[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        backgroundColor: HackomaticTheme.surfaceColor,
-        selectedItemColor: HackomaticTheme.primaryGreen,
-        unselectedItemColor: HackomaticTheme.secondaryTextColor,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
-            label: 'Dashboard',
+      backgroundColor: HackomaticTheme.backgroundColor,
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [const Color(0xFF1A1A1A), const Color(0xFF0A0A0A)],
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.build), label: 'Tools'),
-          BottomNavigationBarItem(icon: Icon(Icons.code), label: 'Scripts'),
-          BottomNavigationBarItem(icon: Icon(Icons.task_alt), label: 'Tasks'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bluetooth),
-            label: 'Bluetooth',
+          border: Border(
+            top: BorderSide(
+              color: const Color(0xFF00FF41).withOpacity(0.3),
+              width: 1,
+            ),
           ),
-        ],
+        ),
+        child: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          currentIndex: _currentIndex,
+          onTap: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          selectedItemColor: const Color(0xFF00FF41),
+          unselectedItemColor: const Color(0xFF00FF41).withOpacity(0.5),
+          selectedLabelStyle: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+          ),
+          unselectedLabelStyle: const TextStyle(fontSize: 10),
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.dashboard),
+              label: 'Dashboard',
+            ),
+            BottomNavigationBarItem(icon: Icon(Icons.build), label: 'Tools'),
+            BottomNavigationBarItem(icon: Icon(Icons.code), label: 'Scripts'),
+            BottomNavigationBarItem(icon: Icon(Icons.task_alt), label: 'Tasks'),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.bluetooth),
+              label: 'Bluetooth',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _refreshCurrentScreen() {
+    // Refresh logic for current screen
+    switch (_currentIndex) {
+      case 0: // Dashboard
+        // Trigger dashboard refresh
+        setState(() {}); // Force rebuild
+        break;
+      case 1: // Tools
+        Provider.of<ToolProvider>(context, listen: false).refreshTools();
+        break;
+      case 2: // Scripts
+        Provider.of<ScriptProvider>(context, listen: false).refreshScripts();
+        break;
+      case 3: // Tasks
+        Provider.of<TaskProvider>(context, listen: false).refreshTasks();
+        break;
+      case 4: // Bluetooth
+        // Refresh bluetooth
+        break;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${_sectionNames[_currentIndex]} actualizado'),
+        backgroundColor: const Color(0xFF00FF41),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 1),
       ),
     );
   }

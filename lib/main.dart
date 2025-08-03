@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/advanced_initializer_screen.dart';
+import 'screens/appbar_demo_screen.dart';
 import 'providers/tool_provider.dart';
 import 'providers/script_provider.dart';
 import 'providers/task_provider.dart';
@@ -31,13 +32,24 @@ class HackomaticApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Hackomatic',
         theme: HackomaticTheme.darkTheme,
-        home: const HackomaticInitializer(),
+        initialRoute: '/',
         routes: {
           '/': (context) => const HackomaticInitializer(),
           '/home': (context) => const HomeScreen(),
           '/linux-setup': (context) => const AdvancedInitializerScreen(),
+          '/appbar-demo': (context) => const AppBarDemoScreen(),
         },
         debugShowCheckedModeBanner: false,
+        // Eliminar completamente el toolbar del sistema
+        builder: (context, child) {
+          return MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              // Forzar que no use toolbar del sistema
+              systemGestureInsets: EdgeInsets.zero,
+            ),
+            child: child!,
+          );
+        },
       ),
     );
   }
@@ -303,7 +315,143 @@ class _HackomaticInitializerState extends State<HackomaticInitializer> {
         }
 
         // Platform ready - show main app
-        return const HomeScreen();
+        return Scaffold(
+          backgroundColor: const Color(0xFF0A0A0A),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Logo principal
+                Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFF00FF41),
+                        const Color(0xFF00FF41).withOpacity(0.3),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(60),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF00FF41).withOpacity(0.5),
+                        blurRadius: 20,
+                        spreadRadius: 5,
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.security,
+                    color: Colors.black,
+                    size: 60,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  '🚀 HACKOMATIC',
+                  style: TextStyle(
+                    color: const Color(0xFF00FF41),
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 3,
+                    shadows: [
+                      Shadow(
+                        color: const Color(0xFF00FF41).withOpacity(0.5),
+                        blurRadius: 10,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Sistema listo ✅',
+                  style: TextStyle(color: Colors.white70, fontSize: 16),
+                ),
+                const SizedBox(height: 40),
+
+                // Botón principal - Ir a HomeScreen
+                SizedBox(
+                  width: 280,
+                  height: 60,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => const HomeScreen()),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF00FF41),
+                      foregroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      elevation: 10,
+                    ),
+                    icon: const Icon(Icons.home, size: 24),
+                    label: const Text(
+                      'ENTRAR AL SISTEMA',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Botón demo del AppBar
+                SizedBox(
+                  width: 280,
+                  height: 50,
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const AppBarDemoScreen(),
+                        ),
+                      );
+                    },
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF00FF41),
+                      side: BorderSide(
+                        color: const Color(0xFF00FF41),
+                        width: 2,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    icon: const Icon(Icons.preview, size: 20),
+                    label: const Text(
+                      '🚀 DEMO SUPER APPBAR',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Info adicional
+                Text(
+                  '✨ AppBar completamente personalizado',
+                  style: TextStyle(color: Colors.white38, fontSize: 12),
+                ),
+                Text(
+                  '🔥 Sin dependencias del sistema operativo',
+                  style: TextStyle(color: Colors.white38, fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        );
       },
     );
   }

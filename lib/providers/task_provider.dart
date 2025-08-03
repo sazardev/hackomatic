@@ -218,4 +218,9 @@ class TaskProvider with ChangeNotifier {
   Stream<String>? getTaskOutputStream(String taskId) {
     return _commandService.getTaskOutput(taskId);
   }
+
+  // Método público para refrescar tareas
+  Future<void> refreshTasks() async {
+    await _loadTasks();
+  }
 }

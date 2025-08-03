@@ -1,15 +1,18 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/tool_provider.dart';
 import '../providers/script_provider.dart';
 import '../providers/task_provider.dart';
 import '../providers/bluetooth_provider.dart';
+import '../providers/platform_provider.dart';
 import '../utils/theme.dart';
 import 'tools_screen.dart';
 import 'scripts_screen.dart';
 import 'tasks_screen.dart';
 import 'bluetooth_screen.dart';
 import 'settings_screen.dart';
+import 'advanced_initializer_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -88,6 +91,10 @@ class DashboardTab extends StatelessWidget {
         children: [
           _buildWelcomeCard(context),
           const SizedBox(height: 16),
+          if (Platform.isLinux) ...[
+            _buildLinuxPlatformCard(context),
+            const SizedBox(height: 16),
+          ],
           _buildStatsRow(context),
           const SizedBox(height: 16),
           _buildQuickActions(context),
@@ -167,6 +174,118 @@ class DashboardTab extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildLinuxPlatformCard(BuildContext context) {
+    return Consumer<PlatformProvider>(
+      builder: (context, platformProvider, child) {
+        return Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.computer,
+                      size: 28,
+                      color: Color(0xFF00FF41),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Linux Pentesting Environment 🐧',
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xFF00FF41),
+                                ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Optimized for penetration testing',
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(color: Colors.white70),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const AdvancedInitializerScreen(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF00FF41),
+                          foregroundColor: Colors.black,
+                        ),
+                        icon: const Icon(Icons.build),
+                        label: const Text('Auto Setup'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () => platformProvider.refresh(),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Color(0xFF00FF41)),
+                          foregroundColor: const Color(0xFF00FF41),
+                        ),
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('Refresh'),
+                      ),
+                    ),
+                  ],
+                ),
+                if (platformProvider.isReady) ...[
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF00FF41).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: const Color(0xFF00FF41).withOpacity(0.3),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.check_circle,
+                          color: Color(0xFF00FF41),
+                          size: 16,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Platform ready for pentesting',
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: const Color(0xFF00FF41)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -281,6 +400,20 @@ class DashboardTab extends StatelessWidget {
               Icons.bluetooth_searching,
               () => _startBluetoothScan(context),
             ),
+            if (Platform.isLinux) ...[
+              _buildQuickActionButton(
+                context,
+                'System Info',
+                Icons.info,
+                () => _showLinuxSystemInfo(context),
+              ),
+              _buildQuickActionButton(
+                context,
+                'Auto Setup',
+                Icons.build,
+                () => _openLinuxAutoSetup(context),
+              ),
+            ],
           ],
         ),
       ],
@@ -444,5 +577,124 @@ class DashboardTab extends StatelessWidget {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('Bluetooth scan started!')));
+  }
+
+  void _showLinuxSystemInfo(BuildContext context) {
+    final platformProvider = Provider.of<PlatformProvider>(
+      context,
+      listen: false,
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A1A),
+        title: Row(
+          children: [
+            const Icon(Icons.computer, color: Color(0xFF00FF41)),
+            const SizedBox(width: 8),
+            const Text(
+              'Linux System Info 🐧',
+              style: TextStyle(color: Color(0xFF00FF41)),
+            ),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildInfoRow('Platform', platformProvider.platformName),
+              _buildInfoRow(
+                'Status',
+                platformProvider.isReady ? 'Ready ✅' : 'Not Ready ❌',
+              ),
+              _buildInfoRow(
+                'Initialized',
+                platformProvider.isInitialized ? 'Yes' : 'No',
+              ),
+              if (platformProvider.systemInfo.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                const Text(
+                  'System Information:',
+                  style: TextStyle(
+                    color: Color(0xFF00FF41),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.black26,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: platformProvider.systemInfo.entries
+                        .map(
+                          (entry) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 2),
+                            child: Text(
+                              '${entry.key}: ${entry.value}',
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontFamily: 'monospace',
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(
+              'Close',
+              style: TextStyle(color: Color(0xFF00FF41)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(
+              '$label:',
+              style: const TextStyle(
+                color: Colors.white70,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(value, style: const TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _openLinuxAutoSetup(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const AdvancedInitializerScreen(),
+      ),
+    );
   }
 }

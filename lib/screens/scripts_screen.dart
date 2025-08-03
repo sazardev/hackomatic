@@ -466,7 +466,13 @@ class _ScriptsScreenState extends State<ScriptsScreen> {
   }
 
   void _runScript(HackingScript script) {
-    // Show a choice: Quick Run or Configure Parameters
+    // For auto-intelligent scripts (no parameters), run directly
+    if (script.parameters.isEmpty) {
+      _quickRunScript(script);
+      return;
+    }
+
+    // For scripts with parameters, show choice: Quick Run or Configure
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -474,58 +480,32 @@ class _ScriptsScreenState extends State<ScriptsScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'Choose how to run this script:',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+            Text('How would you like to run this script?'),
             const SizedBox(height: 16),
-            Row(
-              children: [
-                Icon(Icons.flash_on, color: HackomaticTheme.primaryGreen),
-                const SizedBox(width: 8),
-                const Expanded(
-                  child: Text(
-                    'Quick Run uses auto-detected network parameters',
-                    style: TextStyle(fontSize: 12),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                const Icon(Icons.settings, color: Colors.orange),
-                const SizedBox(width: 8),
-                const Expanded(
-                  child: Text(
-                    'Configure lets you customize all parameters',
-                    style: TextStyle(fontSize: 12),
-                  ),
-                ),
-              ],
+            Text(
+              'Quick Run: Uses auto-detected network parameters',
+              style: TextStyle(fontSize: 12, color: Colors.grey[400]),
             ),
           ],
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton.icon(
             onPressed: () {
               Navigator.pop(context);
               _quickRunScript(script);
             },
-            icon: const Icon(Icons.flash_on),
-            label: const Text('Quick Run'),
+            child: const Text('🚀 Quick Run'),
           ),
-          ElevatedButton.icon(
+          TextButton(
             onPressed: () {
               Navigator.pop(context);
               _showScriptParametersDialog(script);
             },
-            icon: const Icon(Icons.settings),
-            label: const Text('Configure'),
+            child: const Text('⚙️ Configure'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
           ),
         ],
       ),
@@ -538,71 +518,128 @@ class _ScriptsScreenState extends State<ScriptsScreen> {
         context,
         listen: false,
       );
+      final taskProvider = Provider.of<TaskProvider>(context, listen: false);
+
+      // For auto-intelligent scripts with no parameters, run directly
+      if (script.parameters.isEmpty) {
+        // Show brief loading
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const AlertDialog(
+            content: Row(
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(width: 16),
+                Text('🚀 Starting auto-intelligent script...'),
+              ],
+            ),
+          ),
+        );
+
+        // Execute script with empty parameters (it's auto-intelligent)
+        await taskProvider.executeScript(script, {});
+
+        // Close loading dialog
+        if (mounted) Navigator.pop(context);
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '✅ ${script.name} started! Check Tasks for output.',
+              ),
+              backgroundColor: Colors.green,
+              action: SnackBarAction(
+                label: 'View Tasks',
+                onPressed: () {
+                  // Switch to tasks tab - you'll need to implement navigation
+                  // For now, just show a message
+                },
+              ),
+            ),
+          );
+        }
+        return;
+      }
+
+      // For scripts with parameters, get auto-detected values
       final autoParams = await scriptProvider.getAutoParameters(script);
 
-      // Show a brief confirmation with auto-detected parameters
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Quick Run: ${script.name}'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Running with auto-detected parameters:',
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 12),
-              ...autoParams.entries
-                  .map(
-                    (entry) => Padding(
-                      padding: const EdgeInsets.only(bottom: 4),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.auto_awesome,
-                            color: HackomaticTheme.primaryGreen,
-                            size: 16,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            '${entry.key}: ',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Expanded(child: Text(entry.value.toString())),
-                        ],
+      // Show confirmation with auto-detected parameters
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Quick Run: ${script.name}'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Running with auto-detected parameters:',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 12),
+                ...autoParams.entries
+                    .map(
+                      (entry) => Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.auto_awesome,
+                              color: HackomaticTheme.primaryGreen,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '${entry.key}: ',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Expanded(child: Text(entry.value.toString())),
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                  .toList(),
+                    )
+                    .toList(),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _executeScript(script, autoParams);
+                },
+                icon: const Icon(Icons.play_arrow),
+                label: const Text('Execute'),
+              ),
             ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.pop(context);
-                _executeScript(script, autoParams);
-              },
-              icon: const Icon(Icons.play_arrow),
-              label: const Text('Execute'),
-            ),
-          ],
-        ),
-      );
+        );
+      }
     } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to auto-detect parameters: $error'),
-          backgroundColor: HackomaticTheme.errorColor,
-        ),
-      );
+      // Close any open dialogs
+      if (mounted && Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ Failed to auto-configure script: $error'),
+            backgroundColor: HackomaticTheme.errorColor,
+          ),
+        );
+      }
     }
   }
 

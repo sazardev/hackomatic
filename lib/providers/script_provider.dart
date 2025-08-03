@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 import '../models/hacking_script.dart';
 import '../services/storage_service.dart';
-import '../services/tool_detection_service.dart';
+import '../services/network_detection_service.dart';
 
 class ScriptProvider with ChangeNotifier {
   final StorageService _storageService = StorageService();
-  final ToolDetectionService _detectionService = ToolDetectionService();
+  final NetworkDetectionService _networkService = NetworkDetectionService();
   List<HackingScript> _scripts = [];
   List<HackingScript> _filteredScripts = [];
   String _searchQuery = '';
@@ -115,42 +115,43 @@ class ScriptProvider with ChangeNotifier {
   }
 
   Future<Map<String, dynamic>> getAutoParameters(HackingScript script) async {
-    final networkInfo = await _detectionService.getAutoDetectedNetworkInfo();
+    final networkInfo = await _networkService.getAutoScanConfig();
     final parameters = <String, dynamic>{};
 
     // Auto-fill parameters based on script type and parameter names
     for (final param in script.parameters) {
       switch (param.name.toLowerCase()) {
-        case 'network':
-          parameters[param.name] =
-              networkInfo['network_range'] ?? '192.168.1.0/24';
-          break;
         case 'target':
-          parameters[param.name] = await _detectionService.getRandomTarget();
+        case 'ip':
+        case 'host':
+          parameters[param.name] = networkInfo['gateway'];
+          break;
+        case 'network':
+        case 'range':
+          parameters[param.name] = networkInfo['network_range'];
           break;
         case 'interface':
           if (script.category.toLowerCase().contains('wifi')) {
-            parameters[param.name] = networkInfo['wifi_interface'] ?? 'wlan0';
+            parameters[param.name] = networkInfo['wifi_interface'];
           } else {
-            parameters[param.name] =
-                networkInfo['ethernet_interface'] ?? 'eth0';
+            parameters[param.name] = networkInfo['active_interface'];
           }
           break;
         case 'channel':
           parameters[param.name] = '6'; // Default WiFi channel
           break;
         case 'url':
-          parameters[param.name] =
-              'http://${networkInfo['gateway'] ?? '192.168.1.1'}';
+          parameters[param.name] = networkInfo['target_url'];
           break;
         case 'wordlist':
-          parameters[param.name] = '/usr/share/wordlists/dirb/common.txt';
+          parameters[param.name] = networkInfo['wordlist_path'];
           break;
         case 'scan_type':
           parameters[param.name] = '-sS';
           break;
         case 'port_range':
-          parameters[param.name] = '1-1000';
+        case 'ports':
+          parameters[param.name] = networkInfo['port_range'];
           break;
         case 'bssid':
           parameters[param.name] = '00:11:22:33:44:55'; // Placeholder
@@ -159,6 +160,9 @@ class ScriptProvider with ChangeNotifier {
           // Use default value if available
           if (param.defaultValue != null) {
             parameters[param.name] = param.defaultValue;
+          } else {
+            // Intelligent fallback based on network detection
+            parameters[param.name] = networkInfo['gateway'];
           }
       }
     }

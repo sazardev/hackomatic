@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -26,6 +27,14 @@ class BluetoothProvider with ChangeNotifier {
 
   Future<void> _initBluetooth() async {
     try {
+      // Check if platform supports Bluetooth
+      if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
+        if (kDebugMode) {
+          print('ℹ️ Bluetooth not supported on ${Platform.operatingSystem}');
+        }
+        return;
+      }
+
       // Get current state
       _bluetoothState = await FlutterBluetoothSerial.instance.state;
 
@@ -44,6 +53,10 @@ class BluetoothProvider with ChangeNotifier {
     } catch (e) {
       if (kDebugMode) {
         print('Error initializing Bluetooth: $e');
+        // For desktop platforms, this is expected
+        if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
+          print('💡 This is expected on desktop platforms');
+        }
       }
     }
   }

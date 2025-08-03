@@ -1,0 +1,33 @@
+name: hackomatic
+description: "A mobile app for friendly hacking - control your hacking tools efficiently"
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+  provider: ^6.1.2
+  shared_preferences: ^2.2.3
+  permission_handler: ^11.3.1
+  flutter_bluetooth_serial: ^0.4.0
+  network_info_plus: ^5.0.3
+  connectivity_plus: ^6.0.5
+  http: ^1.2.2
+  file_picker: ^8.0.7
+  path_provider: ^2.1.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/icons/
+    - assets/scripts/

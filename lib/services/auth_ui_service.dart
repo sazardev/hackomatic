@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 /// Servicio de Autenticación UI para Hackomatic
 /// Maneja solicitudes de contraseñas de forma segura y amigable
@@ -277,7 +276,7 @@ class _PasswordDialogState extends State<_PasswordDialog>
                 color: const Color(0xFF2A2A2A),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: const Color(0xFF00FF41).withOpacity(0.3),
+                  color: const Color(0xFF00FF41).withValues(alpha: 0.3),
                 ),
               ),
               child: TextField(
@@ -338,10 +337,10 @@ class _PasswordDialogState extends State<_PasswordDialog>
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFF00FF41).withOpacity(0.1),
+                color: const Color(0xFF00FF41).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: const Color(0xFF00FF41).withOpacity(0.3),
+                  color: const Color(0xFF00FF41).withValues(alpha: 0.3),
                 ),
               ),
               child: Row(

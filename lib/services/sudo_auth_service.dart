@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'fast_credential_cache.dart';
+import 'dart:developer' as dev;
 
 /// Servicio de autenticación sudo con interfaz gráfica
 class SudoAuthService {
@@ -8,19 +10,53 @@ class SudoAuthService {
   factory SudoAuthService() => _instance;
   SudoAuthService._internal();
 
+  // Cache de credenciales - EXTENDIDO para mayor duración
   String? _cachedPassword;
   DateTime? _passwordCacheTime;
-  static const Duration _cacheValidDuration = Duration(minutes: 15);
+  static const Duration _cacheTimeout = Duration(
+    hours: 2,
+  ); // ⚡ 2 HORAS de cache
 
   /// Verificar si hay una contraseña válida en caché
   bool get hasValidPasswordCache {
     if (_cachedPassword == null || _passwordCacheTime == null) return false;
 
     final now = DateTime.now();
-    return now.difference(_passwordCacheTime!) < _cacheValidDuration;
+    return now.difference(_passwordCacheTime!) < _cacheTimeout;
   }
 
-  /// Solicitar contraseña con interfaz gráfica
+  /// 🚀 MÉTODO SÚPER RÁPIDO - Obtener password con caché automático
+  Future<String?> getPasswordFast(BuildContext context) async {
+    // 1. Verificar caché en memoria
+    if (hasValidPasswordCache) {
+      dev.log('🚀 Using in-memory cached password');
+      return _cachedPassword;
+    }
+
+    // 2. Verificar caché persistente
+    final cachedFromFile = await FastCredentialCache.getCachedPassword();
+    if (cachedFromFile != null) {
+      dev.log('🚀 Using file cached password');
+      _cachedPassword = cachedFromFile;
+      _passwordCacheTime = DateTime.now();
+      return cachedFromFile;
+    }
+
+    // 3. Si no hay caché, solicitar una vez y guardarlo
+    dev.log('⚠️ No cached password found - requesting once');
+    final password = await requestPassword(context);
+
+    if (password != null) {
+      // Guardar en ambos cachés
+      _cachedPassword = password;
+      _passwordCacheTime = DateTime.now();
+      await FastCredentialCache.cachePassword(password);
+      dev.log('✅ Password cached for future use');
+    }
+
+    return password;
+  }
+
   Future<String?> requestPassword(
     BuildContext context, {
     String title = 'Autenticación requerida',
@@ -70,10 +106,10 @@ class SudoAuthService {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF00FF41).withOpacity(0.1),
+                    color: const Color(0xFF00FF41).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: const Color(0xFF00FF41).withOpacity(0.3),
+                      color: const Color(0xFF00FF41).withValues(alpha: 0.3),
                     ),
                   ),
                   child: Row(
@@ -123,7 +159,7 @@ class SudoAuthService {
                     decoration: InputDecoration(
                       hintText: 'Ingresa tu contraseña...',
                       hintStyle: TextStyle(
-                        color: const Color(0xFF00FF41).withOpacity(0.5),
+                        color: const Color(0xFF00FF41).withValues(alpha: 0.5),
                         fontFamily: 'monospace',
                       ),
                       prefixIcon: const Icon(
@@ -154,9 +190,11 @@ class SudoAuthService {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.orange.withOpacity(0.1),
+                    color: Colors.orange.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: Colors.orange.withOpacity(0.3)),
+                    border: Border.all(
+                      color: Colors.orange.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -170,7 +208,7 @@ class SudoAuthService {
                         child: Text(
                           'Tu contraseña se guardará temporalmente para evitar solicitudes repetitivas',
                           style: TextStyle(
-                            color: Colors.orange.withOpacity(0.9),
+                            color: Colors.orange.withValues(alpha: 0.9),
                             fontSize: 12,
                           ),
                         ),

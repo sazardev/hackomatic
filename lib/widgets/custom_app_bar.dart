@@ -126,12 +126,12 @@ class _HackomaticCustomAppBarState extends State<HackomaticCustomAppBar>
             colors: [
               const Color(0xFF0A0A0A),
               const Color(0xFF1A1A1A),
-              const Color(0xFF00FF41).withOpacity(0.05),
+              const Color(0xFF00FF41).withValues(alpha: .05),
             ],
           ),
           border: Border(
             bottom: BorderSide(
-              color: const Color(0xFF00FF41).withOpacity(0.3),
+              color: const Color(0xFF00FF41).withValues(alpha: .3),
               width: 1,
             ),
           ),
@@ -191,12 +191,12 @@ class _HackomaticCustomAppBarState extends State<HackomaticCustomAppBar>
               gradient: RadialGradient(
                 colors: [
                   const Color(0xFF00FF41),
-                  const Color(0xFF00FF41).withOpacity(0.3),
+                  const Color(0xFF00FF41).withValues(alpha: .3),
                 ],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF00FF41).withOpacity(0.5),
+                  color: const Color(0xFF00FF41).withValues(alpha: .5),
                   blurRadius: 15,
                   spreadRadius: 2,
                 ),
@@ -227,7 +227,7 @@ class _HackomaticCustomAppBarState extends State<HackomaticCustomAppBar>
         Text(
           widget.currentSection,
           style: TextStyle(
-            color: const Color(0xFF00FF41).withOpacity(0.7),
+            color: const Color(0xFF00FF41).withValues(alpha: .7),
             fontSize: 12,
             fontFamily: 'monospace',
           ),
@@ -279,7 +279,7 @@ class _HackomaticCustomAppBarState extends State<HackomaticCustomAppBar>
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.2),
+          color: color.withValues(alpha: .2),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(color: color, width: 1),
         ),
@@ -426,7 +426,7 @@ class _HackomaticCustomAppBarState extends State<HackomaticCustomAppBar>
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: const Color(0xFF00FF41).withOpacity(0.1),
+                color: const Color(0xFF00FF41).withValues(alpha: .1),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: const Icon(Icons.home, color: Color(0xFF00FF41), size: 16),
@@ -444,7 +444,7 @@ class _HackomaticCustomAppBarState extends State<HackomaticCustomAppBar>
                 const SizedBox(width: 8),
                 Icon(
                   Icons.chevron_right,
-                  color: const Color(0xFF00FF41).withOpacity(0.5),
+                  color: const Color(0xFF00FF41).withValues(alpha: .5),
                   size: 16,
                 ),
                 const SizedBox(width: 8),
@@ -457,7 +457,7 @@ class _HackomaticCustomAppBarState extends State<HackomaticCustomAppBar>
                     ),
                     decoration: BoxDecoration(
                       color: isLast
-                          ? const Color(0xFF00FF41).withOpacity(0.2)
+                          ? const Color(0xFF00FF41).withValues(alpha: .2)
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(6),
                       border: isLast
@@ -469,7 +469,7 @@ class _HackomaticCustomAppBarState extends State<HackomaticCustomAppBar>
                       style: TextStyle(
                         color: isLast
                             ? const Color(0xFF00FF41)
-                            : const Color(0xFF00FF41).withOpacity(0.7),
+                            : const Color(0xFF00FF41).withValues(alpha: .7),
                         fontSize: 12,
                         fontWeight: isLast
                             ? FontWeight.bold
@@ -491,10 +491,10 @@ class _HackomaticCustomAppBarState extends State<HackomaticCustomAppBar>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
-        color: const Color(0xFF00FF41).withOpacity(0.05),
+        color: const Color(0xFF00FF41).withValues(alpha: .05),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: const Color(0xFF00FF41).withOpacity(0.3),
+          color: const Color(0xFF00FF41).withValues(alpha: .3),
           width: 1,
         ),
       ),
@@ -711,9 +711,9 @@ class _NotificationItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: .1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: .3)),
       ),
       child: Row(
         children: [
@@ -827,7 +827,7 @@ class _StatRow extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: const Color(0xFF00FF41).withOpacity(0.05),
+        color: const Color(0xFF00FF41).withValues(alpha: .05),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Row(

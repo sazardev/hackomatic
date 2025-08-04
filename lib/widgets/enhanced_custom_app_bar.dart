@@ -6,6 +6,10 @@ import 'package:provider/provider.dart';
 import '../providers/task_provider.dart';
 import '../providers/tool_provider.dart';
 import '../providers/script_provider.dart';
+import '../services/advanced_permissions_service.dart';
+import '../services/advanced_logging_service.dart';
+import '../services/massive_script_repository.dart';
+import '../services/advanced_terminal_service.dart';
 
 /// 🚀 SUPER APPBAR PERSONALIZADO MEJORADO
 /// Sin dependencias del sistema operativo - 100% custom
@@ -91,8 +95,14 @@ class _EnhancedHackomaticAppBarState extends State<EnhancedHackomaticAppBar>
   late Animation<double> _bounceAnimation;
 
   bool _showNotifications = false;
-  bool _showQuickMenu = false;
+  final bool _showQuickMenu = false;
   Timer? _statsTimer;
+
+  // Servicios avanzados
+  late AdvancedPermissionsService _permissionsService;
+  late AdvancedLoggingService _loggingService;
+  late MassiveScriptRepository _scriptRepository;
+  late AdvancedTerminalService _terminalService;
 
   // Estadísticas en tiempo real
   int _runningTasks = 0;
@@ -102,15 +112,45 @@ class _EnhancedHackomaticAppBarState extends State<EnhancedHackomaticAppBar>
   double _memoryUsage = 0.0;
   int _networkSpeed = 0;
   String _systemStatus = '🟢 Ready';
+  bool _hasSudoAccess = false;
+  bool _hasBluetoothAccess = false;
+  bool _hasNetworkAccess = false;
+  int _securityEvents = 0;
+  int _activeConnections = 0;
 
   List<NotificationItem> _notifications = [];
 
   @override
   void initState() {
     super.initState();
+    _initializeServices();
     _initializeAnimations();
     _generateNotifications();
     _startRealTimeUpdates();
+  }
+
+  void _initializeServices() {
+    _permissionsService = AdvancedPermissionsService();
+    _loggingService = AdvancedLoggingService.instance;
+    _scriptRepository = MassiveScriptRepository();
+    _terminalService = AdvancedTerminalService();
+
+    // Inicializar servicios si no están ya inicializados
+    _initializeServicesAsync();
+  }
+
+  void _initializeServicesAsync() async {
+    try {
+      await _loggingService.initialize();
+      await _permissionsService.initializePermissions();
+      await _terminalService.initialize();
+
+      _loggingService.info(
+        'Enhanced AppBar initialized with advanced services',
+      );
+    } catch (e) {
+      _loggingService.error('Error initializing services in AppBar', error: e);
+    }
   }
 
   void _initializeAnimations() {
@@ -168,24 +208,43 @@ class _EnhancedHackomaticAppBarState extends State<EnhancedHackomaticAppBar>
         onTap: () => _showNotificationDetail('Sistema optimizado'),
       ),
       NotificationItem(
-        title: '⚡ Nueva herramienta detectada',
-        subtitle: 'Nmap 7.95 disponible',
+        title: '⚡ Scripts actualizados',
+        subtitle:
+            '${_scriptRepository.getAllScripts().length} scripts disponibles',
         icon: Icons.new_releases,
         color: Colors.orange,
         timestamp: DateTime.now().subtract(const Duration(minutes: 5)),
-        isUrgent: true,
-        actionLabel: 'Instalar',
-        onTap: () => _showNotificationDetail('Nueva herramienta'),
+        isUrgent: false,
+        actionLabel: 'Explorar',
+        onTap: () => _showScriptRepository(),
       ),
       NotificationItem(
-        title: '🛡️ Análisis completado',
-        subtitle: '3 vulnerabilidades encontradas',
+        title: '🛡️ Permisos verificados',
+        subtitle: 'Acceso completo configurado',
         icon: Icons.security,
-        color: Colors.red,
+        color: _hasSudoAccess ? Colors.green : Colors.orange,
         timestamp: DateTime.now().subtract(const Duration(minutes: 10)),
-        isUrgent: true,
-        actionLabel: 'Revisar',
-        onTap: () => _showNotificationDetail('Análisis de seguridad'),
+        isUrgent: !_hasSudoAccess,
+        actionLabel: 'Configurar',
+        onTap: () => _showPermissionsStatus(),
+      ),
+      NotificationItem(
+        title: '📊 Logs activos',
+        subtitle: 'Sistema de monitoreo funcionando',
+        icon: Icons.analytics,
+        color: Colors.blue,
+        timestamp: DateTime.now().subtract(const Duration(minutes: 15)),
+        actionLabel: 'Ver logs',
+        onTap: () => _showLogsViewer(),
+      ),
+      NotificationItem(
+        title: '💻 Terminal avanzado',
+        subtitle: 'Funciones de hacking disponibles',
+        icon: Icons.terminal,
+        color: Colors.purple,
+        timestamp: DateTime.now().subtract(const Duration(minutes: 20)),
+        actionLabel: 'Abrir terminal',
+        onTap: () => _openAdvancedTerminal(),
       ),
     ];
   }
@@ -198,25 +257,59 @@ class _EnhancedHackomaticAppBarState extends State<EnhancedHackomaticAppBar>
     });
   }
 
-  void _updateRealTimeStats() {
+  void _updateRealTimeStats() async {
     final taskProvider = Provider.of<TaskProvider>(context, listen: false);
     final toolProvider = Provider.of<ToolProvider>(context, listen: false);
     final scriptProvider = Provider.of<ScriptProvider>(context, listen: false);
+
+    // Obtener estadísticas avanzadas
+    try {
+      _hasSudoAccess = await _permissionsService.hasSudoAccess();
+      _hasBluetoothAccess = await _permissionsService.hasPermissionFor(
+        'bluetooth',
+      );
+      _hasNetworkAccess = await _permissionsService.hasPermissionFor('network');
+    } catch (e) {
+      _loggingService.warning(
+        'Error checking permissions in AppBar',
+        details: {'error': e.toString()},
+      );
+    }
 
     setState(() {
       _runningTasks = taskProvider.tasks
           .where((task) => task.status.toString().contains('running'))
           .length;
       _totalTools = toolProvider.tools.length;
-      _totalScripts = scriptProvider.scripts.length;
+      _totalScripts = _scriptRepository.getAllScripts().length;
 
-      // Simular estadísticas realistas
+      // Simular estadísticas realistas con variación
       _cpuUsage = 20 + Random().nextDouble() * 30;
       _memoryUsage = 40 + Random().nextDouble() * 20;
       _networkSpeed = 50 + Random().nextInt(150);
+      _securityEvents = Random().nextInt(5);
+      _activeConnections = 2 + Random().nextInt(8);
 
-      _systemStatus = _runningTasks > 0 ? '🟡 Activo' : '🟢 Listo';
+      // Estado del sistema basado en condiciones reales
+      if (_runningTasks > 3) {
+        _systemStatus = '🔴 Sobrecargado';
+      } else if (_runningTasks > 0) {
+        _systemStatus = '🟡 Activo';
+      } else if (_hasSudoAccess && _hasNetworkAccess) {
+        _systemStatus = '🟢 Óptimo';
+      } else {
+        _systemStatus = '🟠 Limitado';
+      }
     });
+
+    // Log de métricas de rendimiento
+    _loggingService.performanceMetric('cpu_usage', _cpuUsage, 'percent');
+    _loggingService.performanceMetric('memory_usage', _memoryUsage, 'percent');
+    _loggingService.performanceMetric(
+      'running_tasks',
+      _runningTasks.toDouble(),
+      'count',
+    );
   }
 
   void _showNotificationDetail(String title) {
@@ -243,6 +336,41 @@ class _EnhancedHackomaticAppBarState extends State<EnhancedHackomaticAppBar>
     );
   }
 
+  /// Mostrar repositorio de scripts
+  void _showScriptRepository() {
+    _loggingService.info('Opening script repository from AppBar');
+    showDialog(
+      context: context,
+      builder: (context) =>
+          _ScriptRepositoryDialog(scriptRepository: _scriptRepository),
+    );
+  }
+
+  /// Mostrar estado de permisos
+  void _showPermissionsStatus() {
+    _loggingService.info('Opening permissions status from AppBar');
+    showDialog(
+      context: context,
+      builder: (context) =>
+          _PermissionsStatusDialog(permissionsService: _permissionsService),
+    );
+  }
+
+  /// Mostrar visor de logs
+  void _showLogsViewer() {
+    _loggingService.info('Opening logs viewer from AppBar');
+    showDialog(
+      context: context,
+      builder: (context) => _LogsViewerDialog(loggingService: _loggingService),
+    );
+  }
+
+  /// Abrir terminal avanzado
+  void _openAdvancedTerminal() {
+    _loggingService.info('Opening advanced terminal from AppBar');
+    Navigator.of(context).pushNamed('/advanced_terminal');
+  }
+
   @override
   void dispose() {
     _pulseController.dispose();
@@ -266,12 +394,12 @@ class _EnhancedHackomaticAppBarState extends State<EnhancedHackomaticAppBar>
             colors: [
               const Color(0xFF0A0A0A),
               const Color(0xFF1A1A1A),
-              const Color(0xFF00FF41).withOpacity(0.1),
+              const Color(0xFF00FF41).withValues(alpha: 0.1),
             ],
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF00FF41).withOpacity(0.2),
+              color: const Color(0xFF00FF41).withValues(alpha: 0.2),
               blurRadius: 20,
               offset: const Offset(0, 5),
             ),
@@ -314,13 +442,15 @@ class _EnhancedHackomaticAppBarState extends State<EnhancedHackomaticAppBar>
                           gradient: RadialGradient(
                             colors: [
                               const Color(0xFF00FF41),
-                              const Color(0xFF00FF41).withOpacity(0.3),
+                              const Color(0xFF00FF41).withValues(alpha: 0.3),
                             ],
                           ),
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFF00FF41).withOpacity(0.5),
+                              color: const Color(
+                                0xFF00FF41,
+                              ).withValues(alpha: 0.5),
                               blurRadius: 10,
                               spreadRadius: 2,
                             ),
@@ -358,7 +488,9 @@ class _EnhancedHackomaticAppBarState extends State<EnhancedHackomaticAppBar>
                         letterSpacing: 2,
                         shadows: [
                           Shadow(
-                            color: const Color(0xFF00FF41).withOpacity(0.5),
+                            color: const Color(
+                              0xFF00FF41,
+                            ).withValues(alpha: 0.5),
                             blurRadius: 5,
                           ),
                         ],
@@ -431,7 +563,7 @@ class _EnhancedHackomaticAppBarState extends State<EnhancedHackomaticAppBar>
                       borderRadius: BorderRadius.circular(6),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.red.withOpacity(0.6),
+                          color: Colors.red.withValues(alpha: 0.6),
                           blurRadius: 4,
                           spreadRadius: 1,
                         ),
@@ -459,7 +591,7 @@ class _EnhancedHackomaticAppBarState extends State<EnhancedHackomaticAppBar>
       color: const Color(0xFF1A1A1A),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
-        side: BorderSide(color: const Color(0xFF00FF41).withOpacity(0.3)),
+        side: BorderSide(color: const Color(0xFF00FF41).withValues(alpha: 0.3)),
       ),
       itemBuilder: (context) => [
         _buildPopupMenuItem('refresh', '🔄 Actualizar', Icons.refresh),
@@ -551,11 +683,13 @@ class _EnhancedHackomaticAppBarState extends State<EnhancedHackomaticAppBar>
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: breadcrumb.isActive
-              ? const Color(0xFF00FF41).withOpacity(0.2)
+              ? const Color(0xFF00FF41).withValues(alpha: 0.2)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(15),
           border: breadcrumb.isActive
-              ? Border.all(color: const Color(0xFF00FF41).withOpacity(0.5))
+              ? Border.all(
+                  color: const Color(0xFF00FF41).withValues(alpha: 0.5),
+                )
               : null,
         ),
         child: Row(
@@ -593,52 +727,56 @@ class _EnhancedHackomaticAppBarState extends State<EnhancedHackomaticAppBar>
     return Container(
       height: 50,
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: [
-          Expanded(
-            child: _buildStatCard(
-              '💻',
-              'CPU',
-              '${_cpuUsage.toInt()}%',
-              Colors.blue,
-            ),
-          ),
-          Expanded(
-            child: _buildStatCard(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            _buildStatCard('💻', 'CPU', '${_cpuUsage.toInt()}%', Colors.blue),
+            const SizedBox(width: 8),
+            _buildStatCard(
               '🧠',
               'RAM',
               '${_memoryUsage.toInt()}%',
               Colors.purple,
             ),
-          ),
-          Expanded(
-            child: _buildStatCard(
-              '🌐',
-              'Red',
-              '${_networkSpeed}MB/s',
-              Colors.green,
-            ),
-          ),
-          Expanded(
-            child: _buildStatCard(
-              '⚡',
-              'Tareas',
-              '$_runningTasks',
-              Colors.orange,
-            ),
-          ),
-          Expanded(
-            child: _buildStatCard('🛠️', 'Tools', '$_totalTools', Colors.cyan),
-          ),
-          Expanded(
-            child: _buildStatCard(
+            const SizedBox(width: 8),
+            _buildStatCard('🌐', 'Red', '${_networkSpeed}MB/s', Colors.green),
+            const SizedBox(width: 8),
+            _buildStatCard('⚡', 'Tareas', '$_runningTasks', Colors.orange),
+            const SizedBox(width: 8),
+            _buildStatCard('🛠️', 'Tools', '$_totalTools', Colors.cyan),
+            const SizedBox(width: 8),
+            _buildStatCard(
               '📜',
               'Scripts',
               '$_totalScripts',
-              Colors.pink,
+              const Color(0xFF00FF41),
             ),
-          ),
-        ],
+            const SizedBox(width: 8),
+            _buildStatCard(
+              '�',
+              'Sudo',
+              _hasSudoAccess ? 'ON' : 'OFF',
+              _hasSudoAccess ? Colors.green : Colors.red,
+            ),
+            const SizedBox(width: 8),
+            _buildStatCard(
+              '📶',
+              'BT',
+              _hasBluetoothAccess ? 'ON' : 'OFF',
+              _hasBluetoothAccess ? Colors.blue : Colors.grey,
+            ),
+            const SizedBox(width: 8),
+            _buildStatCard('🔗', 'Conn', '$_activeConnections', Colors.teal),
+            const SizedBox(width: 8),
+            _buildStatCard(
+              '�',
+              'Alerts',
+              '$_securityEvents',
+              _securityEvents > 0 ? Colors.red : Colors.green,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -653,9 +791,9 @@ class _EnhancedHackomaticAppBarState extends State<EnhancedHackomaticAppBar>
             margin: const EdgeInsets.symmetric(horizontal: 2),
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: color.withOpacity(0.3)),
+              border: Border.all(color: color.withValues(alpha: 0.3)),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -667,24 +805,27 @@ class _EnhancedHackomaticAppBarState extends State<EnhancedHackomaticAppBar>
                   children: [
                     Text(emoji, style: const TextStyle(fontSize: 10)),
                     const SizedBox(width: 2),
-                    Text(
-                      label,
-                      style: TextStyle(
-                        color: color,
-                        fontSize: 8,
-                        fontWeight: FontWeight.bold,
+                    Flexible(
+                      child: Text(
+                        label,
+                        style: TextStyle(
+                          color: color,
+                          fontSize: 7,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 2),
                 Text(
                   value,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 9,
+                    fontSize: 8,
                     fontWeight: FontWeight.bold,
                   ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
@@ -702,7 +843,9 @@ class _EnhancedHackomaticAppBarState extends State<EnhancedHackomaticAppBar>
         decoration: BoxDecoration(
           color: const Color(0xFF1A1A1A),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-          border: Border.all(color: const Color(0xFF00FF41).withOpacity(0.3)),
+          border: Border.all(
+            color: const Color(0xFF00FF41).withValues(alpha: 0.3),
+          ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -743,7 +886,7 @@ class _EnhancedHackomaticAppBarState extends State<EnhancedHackomaticAppBar>
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: notification.color.withOpacity(0.2),
+          color: notification.color.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Icon(notification.icon, color: notification.color, size: 20),
@@ -839,5 +982,622 @@ class _EnhancedHackomaticAppBarState extends State<EnhancedHackomaticAppBar>
         backgroundColor: Color(0xFF00FF41),
       ),
     );
+  }
+}
+
+/// Diálogo para mostrar el repositorio de scripts
+class _ScriptRepositoryDialog extends StatelessWidget {
+  final MassiveScriptRepository scriptRepository;
+
+  const _ScriptRepositoryDialog({required this.scriptRepository});
+
+  @override
+  Widget build(BuildContext context) {
+    final scripts = scriptRepository.getAllScripts();
+    final stats = scriptRepository.getScriptStatistics();
+
+    return AlertDialog(
+      backgroundColor: const Color(0xFF1A1A1A),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: const BorderSide(color: Color(0xFF00FF41), width: 2),
+      ),
+      title: Row(
+        children: [
+          const Icon(Icons.code, color: Color(0xFF00FF41)),
+          const SizedBox(width: 10),
+          const Text(
+            'Repositorio de Scripts',
+            style: TextStyle(
+              color: Color(0xFF00FF41),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+      content: SizedBox(
+        width: 500,
+        height: 400,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Estadísticas
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF00FF41).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: const Color(0xFF00FF41).withValues(alpha: 0.3),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '📊 Estadísticas',
+                    style: TextStyle(
+                      color: const Color(0xFF00FF41),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Total: ${stats['total_scripts']} scripts\n'
+                    'Con sudo: ${stats['requires_sudo']}\n'
+                    'Sin sudo: ${stats['no_sudo_required']}',
+                    style: const TextStyle(color: Colors.white70, fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Lista de categorías
+            const Text(
+              '📁 Categorías disponibles:',
+              style: TextStyle(
+                color: Color(0xFF00FF41),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: ListView(
+                children: (stats['categories'] as Map<String, int>).entries.map(
+                  (entry) {
+                    return ListTile(
+                      leading: Icon(
+                        _getCategoryIcon(entry.key),
+                        color: const Color(0xFF00FF41),
+                        size: 20,
+                      ),
+                      title: Text(
+                        entry.key,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      subtitle: Text(
+                        '${entry.value} scripts',
+                        style: const TextStyle(color: Colors.white54),
+                      ),
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios,
+                        color: Color(0xFF00FF41),
+                        size: 16,
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        // Navegar a la categoría específica
+                      },
+                    );
+                  },
+                ).toList(),
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text(
+            'Cerrar',
+            style: TextStyle(color: Color(0xFF00FF41)),
+          ),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF00FF41),
+            foregroundColor: Colors.black,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+            // Navegar a la pantalla completa de scripts
+          },
+          child: const Text('Ver Todo'),
+        ),
+      ],
+    );
+  }
+
+  IconData _getCategoryIcon(String category) {
+    switch (category) {
+      case 'Reconnaissance':
+        return Icons.search;
+      case 'Exploitation':
+        return Icons.bug_report;
+      case 'Wireless':
+        return Icons.wifi;
+      case 'Post-Exploitation':
+        return Icons.security;
+      case 'Digital Forensics':
+        return Icons.analytics;
+      case 'Social Engineering':
+        return Icons.people;
+      case 'Evasion':
+        return Icons.visibility_off;
+      case 'Malware Analysis':
+        return Icons.warning;
+      case 'Web Application':
+        return Icons.web;
+      case 'Password Cracking':
+        return Icons.lock_open;
+      default:
+        return Icons.code;
+    }
+  }
+}
+
+/// Diálogo para mostrar el estado de permisos
+class _PermissionsStatusDialog extends StatefulWidget {
+  final AdvancedPermissionsService permissionsService;
+
+  const _PermissionsStatusDialog({required this.permissionsService});
+
+  @override
+  State<_PermissionsStatusDialog> createState() =>
+      _PermissionsStatusDialogState();
+}
+
+class _PermissionsStatusDialogState extends State<_PermissionsStatusDialog> {
+  Map<String, dynamic>? _permissionStatus;
+  Map<String, dynamic>? _deviceInfo;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPermissionStatus();
+  }
+
+  void _loadPermissionStatus() async {
+    try {
+      final permissions = await widget.permissionsService
+          .checkCurrentPermissions();
+      final deviceInfo = await widget.permissionsService.getDeviceInfo();
+
+      setState(() {
+        _permissionStatus = permissions.map(
+          (k, v) => MapEntry(k, v.toString()),
+        );
+        _deviceInfo = deviceInfo;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: const Color(0xFF1A1A1A),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: const BorderSide(color: Color(0xFF00FF41), width: 2),
+      ),
+      title: Row(
+        children: [
+          const Icon(Icons.admin_panel_settings, color: Color(0xFF00FF41)),
+          const SizedBox(width: 10),
+          const Text(
+            'Estado de Permisos',
+            style: TextStyle(
+              color: Color(0xFF00FF41),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+      content: SizedBox(
+        width: 500,
+        height: 400,
+        child: _isLoading
+            ? const Center(
+                child: CircularProgressIndicator(color: Color(0xFF00FF41)),
+              )
+            : SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Información del dispositivo
+                    if (_deviceInfo != null) ...[
+                      const Text(
+                        '📱 Información del dispositivo:',
+                        style: TextStyle(
+                          color: Color(0xFF00FF41),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF00FF41).withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          'Plataforma: ${_deviceInfo!['platform']}\n'
+                          'Versión: ${_deviceInfo!['version']}\n'
+                          'App: ${_deviceInfo!['package']['name']} v${_deviceInfo!['package']['version']}',
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+
+                    // Estado de permisos
+                    const Text(
+                      '🔐 Permisos del sistema:',
+                      style: TextStyle(
+                        color: Color(0xFF00FF41),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    if (_permissionStatus != null)
+                      ..._permissionStatus!.entries.map((entry) {
+                        final isGranted = entry.value.toString().contains(
+                          'granted',
+                        );
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: isGranted
+                                ? Colors.green.withValues(alpha: 0.2)
+                                : Colors.red.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: isGranted ? Colors.green : Colors.red,
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                isGranted ? Icons.check_circle : Icons.cancel,
+                                color: isGranted ? Colors.green : Colors.red,
+                                size: 16,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  entry.key.replaceAll('Permission.', ''),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                isGranted ? 'CONCEDIDO' : 'DENEGADO',
+                                style: TextStyle(
+                                  color: isGranted ? Colors.green : Colors.red,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                  ],
+                ),
+              ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text(
+            'Cerrar',
+            style: TextStyle(color: Color(0xFF00FF41)),
+          ),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF00FF41),
+            foregroundColor: Colors.black,
+          ),
+          onPressed: () async {
+            await widget.permissionsService.openPermissionSettings();
+          },
+          child: const Text('Configurar'),
+        ),
+      ],
+    );
+  }
+}
+
+/// Diálogo para mostrar logs
+class _LogsViewerDialog extends StatefulWidget {
+  final AdvancedLoggingService loggingService;
+
+  const _LogsViewerDialog({required this.loggingService});
+
+  @override
+  State<_LogsViewerDialog> createState() => _LogsViewerDialogState();
+}
+
+class _LogsViewerDialogState extends State<_LogsViewerDialog> {
+  List<LogEntry> _logs = [];
+  Map<String, int> _logStats = {};
+  bool _isLoading = true;
+  final String _selectedLevel = 'ALL';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLogs();
+  }
+
+  void _loadLogs() async {
+    try {
+      final logs = await widget.loggingService.getRecentLogs(limit: 50);
+      final stats = await widget.loggingService.getLogStatistics();
+
+      setState(() {
+        _logs = logs;
+        _logStats = stats;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: const Color(0xFF1A1A1A),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: const BorderSide(color: Color(0xFF00FF41), width: 2),
+      ),
+      title: Row(
+        children: [
+          const Icon(Icons.list_alt, color: Color(0xFF00FF41)),
+          const SizedBox(width: 10),
+          const Text(
+            'Visor de Logs',
+            style: TextStyle(
+              color: Color(0xFF00FF41),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+      content: SizedBox(
+        width: 600,
+        height: 500,
+        child: _isLoading
+            ? const Center(
+                child: CircularProgressIndicator(color: Color(0xFF00FF41)),
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Estadísticas
+                  if (_logStats.isNotEmpty) ...[
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF00FF41).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            '📊 Estadísticas (últimos 7 días):',
+                            style: TextStyle(
+                              color: Color(0xFF00FF41),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 16,
+                            children: _logStats.entries.map((entry) {
+                              return Text(
+                                '${entry.key}: ${entry.value}',
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 12,
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+
+                  // Lista de logs
+                  const Text(
+                    '📋 Logs recientes:',
+                    style: TextStyle(
+                      color: Color(0xFF00FF41),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: _logs.length,
+                      itemBuilder: (context, index) {
+                        final log = _logs[index];
+                        final levelColor = _getLogLevelColor(log.level);
+
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 4),
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: levelColor.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                              color: levelColor.withValues(alpha: 0.3),
+                              width: 1,
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    _getLogLevelIcon(log.level),
+                                    color: levelColor,
+                                    size: 16,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    log.level
+                                        .toString()
+                                        .replaceAll('Level.', '')
+                                        .toUpperCase(),
+                                    style: TextStyle(
+                                      color: levelColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  Text(
+                                    '${log.timestamp.hour.toString().padLeft(2, '0')}:${log.timestamp.minute.toString().padLeft(2, '0')}:${log.timestamp.second.toString().padLeft(2, '0')}',
+                                    style: const TextStyle(
+                                      color: Colors.white54,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                log.message,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              if (log.category != 'GENERAL') ...[
+                                const SizedBox(height: 2),
+                                Text(
+                                  '📁 ${log.category}',
+                                  style: const TextStyle(
+                                    color: Colors.white54,
+                                    fontSize: 10,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text(
+            'Cerrar',
+            style: TextStyle(color: Color(0xFF00FF41)),
+          ),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF00FF41),
+            foregroundColor: Colors.black,
+          ),
+          onPressed: () async {
+            try {
+              final exportData = await widget.loggingService.exportLogs();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Logs exportados (${exportData.length} caracteres)',
+                  ),
+                  backgroundColor: const Color(0xFF00FF41),
+                ),
+              );
+            } catch (e) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Error al exportar logs'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          },
+          child: const Text('Exportar'),
+        ),
+      ],
+    );
+  }
+
+  Color _getLogLevelColor(LogLevel level) {
+    switch (level) {
+      case LogLevel.debug:
+        return Colors.blue;
+      case LogLevel.info:
+        return const Color(0xFF00FF41);
+      case LogLevel.warning:
+        return Colors.orange;
+      case LogLevel.error:
+        return Colors.red;
+      case LogLevel.fatal:
+        return Colors.purple;
+      default:
+        return Colors.white;
+    }
+  }
+
+  IconData _getLogLevelIcon(LogLevel level) {
+    switch (level) {
+      case LogLevel.debug:
+        return Icons.bug_report;
+      case LogLevel.info:
+        return Icons.info;
+      case LogLevel.warning:
+        return Icons.warning;
+      case LogLevel.error:
+        return Icons.error;
+      case LogLevel.fatal:
+        return Icons.dangerous;
+      default:
+        return Icons.circle;
+    }
   }
 }

@@ -13,6 +13,39 @@ class HackomaticTheme {
   static const Color warningColor = Color(0xFFFFAA00);
   static const Color successColor = Color(0xFF00FF41);
 
+  // Aliases para compatibilidad
+  static const Color primaryColor = primaryGreen;
+  static const Color textPrimary = textColor;
+  static const Color textSecondary = secondaryTextColor;
+  static const Color dangerColor = errorColor;
+
+  // Text styles para compatibilidad
+  static const TextStyle titleLarge = TextStyle(
+    color: textColor,
+    fontSize: 24,
+    fontWeight: FontWeight.bold,
+    fontFamily: 'Courier',
+  );
+
+  static const TextStyle titleMedium = TextStyle(
+    color: textColor,
+    fontSize: 20,
+    fontWeight: FontWeight.bold,
+    fontFamily: 'Courier',
+  );
+
+  static const TextStyle bodyLarge = TextStyle(
+    color: textColor,
+    fontSize: 16,
+    fontFamily: 'Courier',
+  );
+
+  static const TextStyle bodyMedium = TextStyle(
+    color: textColor,
+    fontSize: 14,
+    fontFamily: 'Courier',
+  );
+
   static ThemeData get darkTheme {
     return ThemeData(
       brightness: Brightness.dark,

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/linux_auto_setup_service.dart';
-import '../services/terminal_ui_service.dart';
-import '../services/auth_ui_service.dart';
-import '../widgets/terminal_display_widget.dart';
 import '../providers/platform_provider.dart';
 import 'home_screen.dart';
 
@@ -202,7 +199,7 @@ class _LinuxAutoSetupScreenState extends State<LinuxAutoSetupScreen>
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF00FF41).withOpacity(0.1),
+                  color: const Color(0xFF00FF41).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(15),
                   border: Border.all(color: const Color(0xFF00FF41), width: 2),
                 ),
@@ -231,7 +228,7 @@ class _LinuxAutoSetupScreenState extends State<LinuxAutoSetupScreen>
               Text(
                 '🐧 Configuración Automática de Pentesting',
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                   fontSize: 14,
                 ),
               ),
@@ -339,7 +336,7 @@ class _LinuxAutoSetupScreenState extends State<LinuxAutoSetupScreen>
                       Text(
                         feature['description']!,
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.7),
+                          color: Colors.white.withValues(alpha: 0.7),
                           fontSize: 12,
                         ),
                       ),
@@ -360,7 +357,7 @@ class _LinuxAutoSetupScreenState extends State<LinuxAutoSetupScreen>
         color: const Color(0xFF1A1A1A),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: const Color(0xFF00FF41).withOpacity(0.3),
+          color: const Color(0xFF00FF41).withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -436,7 +433,7 @@ class _LinuxAutoSetupScreenState extends State<LinuxAutoSetupScreen>
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
-              color: const Color(0xFF00FF41).withOpacity(0.3),
+              color: const Color(0xFF00FF41).withValues(alpha: 0.3),
               width: 3,
             ),
           ),

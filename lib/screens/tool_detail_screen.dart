@@ -77,10 +77,12 @@ class _ToolDetailScreenState extends State<ToolDetailScreen> {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: HackomaticTheme.primaryGreen.withOpacity(0.1),
+                    color: HackomaticTheme.primaryGreen.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: HackomaticTheme.primaryGreen.withOpacity(0.3),
+                      color: HackomaticTheme.primaryGreen.withValues(
+                        alpha: 0.3,
+                      ),
                     ),
                   ),
                   child: Icon(
@@ -147,9 +149,9 @@ class _ToolDetailScreenState extends State<ToolDetailScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Text(
         label,
@@ -307,7 +309,9 @@ class _ToolDetailScreenState extends State<ToolDetailScreen> {
       decoration: BoxDecoration(
         color: HackomaticTheme.surfaceColor,
         border: Border(
-          top: BorderSide(color: HackomaticTheme.primaryGreen.withOpacity(0.3)),
+          top: BorderSide(
+            color: HackomaticTheme.primaryGreen.withValues(alpha: 0.3),
+          ),
         ),
       ),
       child: Row(

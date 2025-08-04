@@ -97,7 +97,7 @@ class _TasksScreenState extends State<TasksScreen>
         color: HackomaticTheme.surfaceColor,
         border: Border(
           bottom: BorderSide(
-            color: HackomaticTheme.primaryGreen.withOpacity(0.3),
+            color: HackomaticTheme.primaryGreen.withValues(alpha: 0.3),
           ),
         ),
       ),
@@ -185,12 +185,14 @@ class _TasksScreenState extends State<TasksScreen>
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: _getTaskStatusColor(task.status).withOpacity(0.1),
+                      color: _getTaskStatusColor(
+                        task.status,
+                      ).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: _getTaskStatusColor(
                           task.status,
-                        ).withOpacity(0.3),
+                        ).withValues(alpha: 0.3),
                       ),
                     ),
                     child: Icon(
@@ -491,8 +493,8 @@ class _TasksScreenState extends State<TasksScreen>
                             color: HackomaticTheme.backgroundColor,
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
-                              color: HackomaticTheme.primaryGreen.withOpacity(
-                                0.3,
+                              color: HackomaticTheme.primaryGreen.withValues(
+                                alpha: 0.3,
                               ),
                             ),
                           ),
@@ -524,10 +526,14 @@ class _TasksScreenState extends State<TasksScreen>
                         width: double.infinity,
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: HackomaticTheme.errorColor.withOpacity(0.1),
+                          color: HackomaticTheme.errorColor.withValues(
+                            alpha: 0.1,
+                          ),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: HackomaticTheme.errorColor.withOpacity(0.3),
+                            color: HackomaticTheme.errorColor.withValues(
+                              alpha: 0.3,
+                            ),
                           ),
                         ),
                         child: Text(

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../services/platform_integration_service.dart';
 import '../services/network_detection_service.dart';
 import '../services/command_execution_service.dart';
+import 'dart:developer' as dev;
 
 class PlatformProvider extends ChangeNotifier {
   final PlatformIntegrationService _platformService =
@@ -35,8 +36,8 @@ class PlatformProvider extends ChangeNotifier {
       _initializationError = '';
 
       if (kDebugMode) {
-        print('🚀 Starting platform initialization...');
-        print(
+        dev.log('🚀 Starting platform initialization...');
+        dev.log(
           '� Platform: ${_platformService.isAndroid ? 'Android' : 'Linux'}',
         );
       }
@@ -45,13 +46,13 @@ class PlatformProvider extends ChangeNotifier {
       _isInitialized = await _platformService.initialize();
 
       if (kDebugMode) {
-        print('✅ Platform service initialized: $_isInitialized');
+        dev.log('✅ Platform service initialized: $_isInitialized');
       }
 
       if (!_isInitialized) {
         _initializationError = 'Failed to initialize platform services';
         if (kDebugMode) {
-          print('❌ Platform initialization failed');
+          dev.log('❌ Platform initialization failed');
         }
         return;
       }
@@ -59,38 +60,38 @@ class PlatformProvider extends ChangeNotifier {
       // 2. Cargar información del sistema
       await loadSystemInfo();
       if (kDebugMode) {
-        print('✅ System info loaded');
+        dev.log('✅ System info loaded');
       }
 
       // 3. Cargar configuración optimizada
       await loadConfiguration();
       if (kDebugMode) {
-        print('✅ Configuration loaded');
+        dev.log('✅ Configuration loaded');
       }
 
       // 4. Verificar si está listo para usar
       _isReady = await _platformService.isPlatformReady();
       if (kDebugMode) {
-        print('🔍 Platform ready: $_isReady');
+        dev.log('🔍 Platform ready: $_isReady');
       }
 
       if (!_isReady) {
         _initializationError = 'Platform not ready for operation';
         if (kDebugMode) {
-          print('⚠️ Platform not ready, but continuing...');
+          dev.log('⚠️ Platform not ready, but continuing...');
         }
       }
 
       if (kDebugMode) {
-        print('🎉 Platform initialization completed successfully!');
+        dev.log('🎉 Platform initialization completed successfully!');
       }
     } catch (e, stackTrace) {
       _initializationError = 'Initialization error: $e';
       _isInitialized = false;
       _isReady = false;
       if (kDebugMode) {
-        print('💥 Platform initialization error: $e');
-        print('📍 Stack trace: $stackTrace');
+        dev.log('💥 Platform initialization error: $e');
+        dev.log('📍 Stack trace: $stackTrace');
       }
     }
   }
@@ -102,7 +103,7 @@ class PlatformProvider extends ChangeNotifier {
       // Don't notify listeners here during initialization
     } catch (e) {
       if (kDebugMode) {
-        print('Error loading system info: $e');
+        dev.log('Error loading system info: $e');
       }
       _systemInfo = {'error': e.toString()};
     }
@@ -115,7 +116,7 @@ class PlatformProvider extends ChangeNotifier {
       // Don't notify listeners here during initialization
     } catch (e) {
       if (kDebugMode) {
-        print('Error loading configuration: $e');
+        dev.log('Error loading configuration: $e');
       }
       _configuration = {'error': e.toString()};
     }
@@ -147,7 +148,7 @@ class PlatformProvider extends ChangeNotifier {
 
       return localIP != '0.0.0.0' && localIP.isNotEmpty;
     } catch (e) {
-      print('Network connectivity check failed: $e');
+      dev.log('Network connectivity check failed: $e');
       return false;
     }
   }
@@ -157,7 +158,7 @@ class PlatformProvider extends ChangeNotifier {
     try {
       return await _platformService.getRecommendedCommands();
     } catch (e) {
-      print('Error getting recommended commands: $e');
+      dev.log('Error getting recommended commands: $e');
       return [];
     }
   }
@@ -184,7 +185,7 @@ class PlatformProvider extends ChangeNotifier {
     try {
       return await _networkService.getAvailableTools();
     } catch (e) {
-      print('Error getting available tools: $e');
+      dev.log('Error getting available tools: $e');
       return {};
     }
   }
@@ -194,7 +195,7 @@ class PlatformProvider extends ChangeNotifier {
     try {
       return await _networkService.getAutoScanConfig();
     } catch (e) {
-      print('Error getting network config: $e');
+      dev.log('Error getting network config: $e');
       return {};
     }
   }
@@ -204,7 +205,7 @@ class PlatformProvider extends ChangeNotifier {
     try {
       return await _networkService.getPreConfiguredCommands();
     } catch (e) {
-      print('Error getting pre-configured commands: $e');
+      dev.log('Error getting pre-configured commands: $e');
       return {};
     }
   }
@@ -214,7 +215,7 @@ class PlatformProvider extends ChangeNotifier {
     try {
       return await _networkService.checkRequiredPermissions();
     } catch (e) {
-      print('Error checking permissions: $e');
+      dev.log('Error checking permissions: $e');
       return {};
     }
   }
@@ -226,7 +227,7 @@ class PlatformProvider extends ChangeNotifier {
       // Only notify if cleanup actually changed something
       notifyListeners();
     } catch (e) {
-      print('Cleanup error: $e');
+      dev.log('Cleanup error: $e');
     }
   }
 

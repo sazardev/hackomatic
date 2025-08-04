@@ -8,6 +8,11 @@ class HackingScript {
   final String author;
   final DateTime createdAt;
   final bool isFavorite;
+  final String difficulty;
+  final String command;
+  final List<String> tags;
+  final bool requiresSudo;
+  final int? estimatedTime;
 
   HackingScript({
     required this.id,
@@ -18,7 +23,12 @@ class HackingScript {
     required this.parameters,
     required this.author,
     required this.createdAt,
+    required this.difficulty,
+    required this.command,
+    required this.tags,
     this.isFavorite = false,
+    this.requiresSudo = false,
+    this.estimatedTime,
   });
 
   factory HackingScript.fromJson(Map<String, dynamic> json) {
@@ -28,12 +38,19 @@ class HackingScript {
       description: json['description'],
       category: json['category'],
       scriptPath: json['scriptPath'],
-      parameters: (json['parameters'] as List)
-          .map((p) => ScriptParameter.fromJson(p))
-          .toList(),
+      parameters:
+          (json['parameters'] as List?)
+              ?.map((p) => ScriptParameter.fromJson(p))
+              .toList() ??
+          [],
       author: json['author'],
       createdAt: DateTime.parse(json['createdAt']),
+      difficulty: json['difficulty'] ?? 'Beginner',
+      command: json['command'] ?? '',
+      tags: List<String>.from(json['tags'] ?? []),
       isFavorite: json['isFavorite'] ?? false,
+      requiresSudo: json['requiresSudo'] ?? false,
+      estimatedTime: json['estimatedTime'],
     );
   }
 
@@ -47,7 +64,12 @@ class HackingScript {
       'parameters': parameters.map((p) => p.toJson()).toList(),
       'author': author,
       'createdAt': createdAt.toIso8601String(),
+      'difficulty': difficulty,
+      'command': command,
+      'tags': tags,
       'isFavorite': isFavorite,
+      'requiresSudo': requiresSudo,
+      'estimatedTime': estimatedTime,
     };
   }
 }

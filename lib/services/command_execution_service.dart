@@ -4,6 +4,7 @@ import '../models/hacking_task.dart';
 import '../models/hacking_tool.dart';
 import '../models/hacking_script.dart';
 import 'network_detection_service.dart';
+import 'dart:developer' as dev;
 
 class CommandExecutionService {
   static final CommandExecutionService _instance =
@@ -18,6 +19,35 @@ class CommandExecutionService {
   // Platform detection
   bool get isAndroid => Platform.isAndroid;
   bool get isLinux => Platform.isLinux;
+
+  /// Ejecuta un comando simple y devuelve el resultado
+  Future<CommandResult> executeCommand(String command) async {
+    try {
+      final List<String> commandParts = command.split(' ');
+      final String executable = commandParts.first;
+      final List<String> arguments = commandParts.skip(1).toList();
+
+      final ProcessResult result = await Process.run(
+        executable,
+        arguments,
+        runInShell: true,
+      );
+
+      return CommandResult(
+        success: result.exitCode == 0,
+        exitCode: result.exitCode,
+        stdout: result.stdout.toString(),
+        stderr: result.stderr.toString(),
+      );
+    } catch (e) {
+      return CommandResult(
+        success: false,
+        exitCode: -1,
+        stdout: '',
+        stderr: e.toString(),
+      );
+    }
+  }
 
   Future<HackingTask> executeToolCommand(
     HackingTool tool,
@@ -563,7 +593,7 @@ class CommandExecutionService {
       // Otherwise, return original path and hope it's accessible
       return scriptPath;
     } catch (e) {
-      print('Error preparing script for Android: $e');
+      dev.log('Error preparing script for Android: $e');
       return scriptPath;
     }
   }
@@ -609,5 +639,31 @@ class CommandExecutionService {
       controller.close();
     }
     _outputControllers.clear();
+  }
+}
+
+/// Resultado de la ejecución de un comando
+class CommandResult {
+  final bool success;
+  final int exitCode;
+  final String stdout;
+  final String stderr;
+  final Duration? executionTime;
+
+  CommandResult({
+    required this.success,
+    required this.exitCode,
+    required this.stdout,
+    required this.stderr,
+    this.executionTime,
+  });
+
+  // Alias para compatibilidad
+  String get output => stdout;
+  String get error => stderr;
+
+  @override
+  String toString() {
+    return 'CommandResult(success: $success, exitCode: $exitCode, stdout: $stdout, stderr: $stderr)';
   }
 }

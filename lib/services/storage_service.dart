@@ -291,6 +291,10 @@ class StorageService {
         author: 'Hackomatic Team',
         createdAt: DateTime.now(),
         parameters: [], // Sin parámetros - todo automático
+        difficulty: 'Beginner',
+        command: 'bash assets/scripts/quick_network_scan.sh',
+        tags: ['network', 'scanning', 'auto'],
+        requiresSudo: false,
       ),
       HackingScript(
         id: 'auto_port_scan',
@@ -301,6 +305,10 @@ class StorageService {
         author: 'Hackomatic Team',
         createdAt: DateTime.now(),
         parameters: [], // Sin parámetros - auto-detecta gateway
+        difficulty: 'Beginner',
+        command: 'bash assets/scripts/auto_port_scan.sh',
+        tags: ['ports', 'scanning', 'auto'],
+        requiresSudo: false,
       ),
       HackingScript(
         id: 'wifi_discovery',
@@ -311,6 +319,10 @@ class StorageService {
         author: 'Hackomatic Team',
         createdAt: DateTime.now(),
         parameters: [], // Auto-detecta interfaz WiFi
+        difficulty: 'Intermediate',
+        command: 'bash assets/scripts/wifi_discovery.sh',
+        tags: ['wifi', 'wireless', 'discovery'],
+        requiresSudo: true,
       ),
       HackingScript(
         id: 'network_info',
@@ -321,6 +333,10 @@ class StorageService {
         author: 'Hackomatic Team',
         createdAt: DateTime.now(),
         parameters: [], // Todo automático
+        difficulty: 'Beginner',
+        command: 'bash assets/scripts/network_info.sh',
+        tags: ['network', 'info', 'configuration'],
+        requiresSudo: false,
       ),
       HackingScript(
         id: 'auto_web_scan',
@@ -331,6 +347,10 @@ class StorageService {
         author: 'Hackomatic Team',
         createdAt: DateTime.now(),
         parameters: [], // Auto-detecta gateway como objetivo
+        difficulty: 'Intermediate',
+        command: 'bash assets/scripts/auto_web_scan.sh',
+        tags: ['web', 'scanning', 'gateway'],
+        requiresSudo: false,
       ),
       HackingScript(
         id: 'device_discovery',
@@ -341,6 +361,10 @@ class StorageService {
         author: 'Hackomatic Team',
         createdAt: DateTime.now(),
         parameters: [], // Auto-detecta red
+        difficulty: 'Beginner',
+        command: 'bash assets/scripts/device_discovery.sh',
+        tags: ['devices', 'discovery', 'network'],
+        requiresSudo: false,
       ),
       // Scripts opcionales con parámetros mínimos
       HackingScript(
@@ -361,6 +385,10 @@ class StorageService {
             description: 'IP o dominio a escanear',
           ),
         ],
+        difficulty: 'Intermediate',
+        command: 'bash assets/scripts/custom_target_scan.sh',
+        tags: ['custom', 'scanning', 'target'],
+        requiresSudo: false,
       ),
     ];
   }

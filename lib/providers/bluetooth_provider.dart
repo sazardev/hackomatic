@@ -1,13 +1,13 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'dart:developer' as dev;
 
 class BluetoothProvider with ChangeNotifier {
   BluetoothState _bluetoothState = BluetoothState.UNKNOWN;
-  List<BluetoothDevice> _devices = [];
+  final List<BluetoothDevice> _devices = [];
   List<BluetoothDevice> _bondedDevices = [];
   BluetoothConnection? _connection;
   bool _isScanning = false;
@@ -30,7 +30,7 @@ class BluetoothProvider with ChangeNotifier {
       // Check if platform supports Bluetooth
       if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
         if (kDebugMode) {
-          print('ℹ️ Bluetooth not supported on ${Platform.operatingSystem}');
+          dev.log('ℹ️ Bluetooth not supported on ${Platform.operatingSystem}');
         }
         return;
       }
@@ -52,10 +52,10 @@ class BluetoothProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       if (kDebugMode) {
-        print('Error initializing Bluetooth: $e');
+        dev.log('Error initializing Bluetooth: $e');
         // For desktop platforms, this is expected
         if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
-          print('💡 This is expected on desktop platforms');
+          dev.log('💡 This is expected on desktop platforms');
         }
       }
     }
@@ -83,7 +83,7 @@ class BluetoothProvider with ChangeNotifier {
       await FlutterBluetoothSerial.instance.requestEnable();
     } catch (e) {
       if (kDebugMode) {
-        print('Error enabling Bluetooth: $e');
+        dev.log('Error enabling Bluetooth: $e');
       }
     }
   }
@@ -94,7 +94,7 @@ class BluetoothProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       if (kDebugMode) {
-        print('Error getting bonded devices: $e');
+        dev.log('Error getting bonded devices: $e');
       }
     }
   }
@@ -105,7 +105,7 @@ class BluetoothProvider with ChangeNotifier {
     final hasPermission = await requestPermissions();
     if (!hasPermission) {
       if (kDebugMode) {
-        print('Bluetooth permissions not granted');
+        dev.log('Bluetooth permissions not granted');
       }
       return;
     }
@@ -136,7 +136,7 @@ class BluetoothProvider with ChangeNotifier {
       _isScanning = false;
       notifyListeners();
       if (kDebugMode) {
-        print('Error starting scan: $e');
+        dev.log('Error starting scan: $e');
       }
     }
   }
@@ -148,7 +148,7 @@ class BluetoothProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       if (kDebugMode) {
-        print('Error stopping scan: $e');
+        dev.log('Error stopping scan: $e');
       }
     }
   }
@@ -186,7 +186,7 @@ class BluetoothProvider with ChangeNotifier {
       return true;
     } catch (e) {
       if (kDebugMode) {
-        print('Error connecting to device: $e');
+        dev.log('Error connecting to device: $e');
       }
       return false;
     }
@@ -201,7 +201,7 @@ class BluetoothProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       if (kDebugMode) {
-        print('Error disconnecting: $e');
+        dev.log('Error disconnecting: $e');
       }
     }
   }
@@ -217,7 +217,7 @@ class BluetoothProvider with ChangeNotifier {
       return true;
     } catch (e) {
       if (kDebugMode) {
-        print('Error sending command: $e');
+        dev.log('Error sending command: $e');
       }
       return false;
     }

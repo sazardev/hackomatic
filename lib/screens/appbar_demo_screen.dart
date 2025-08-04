@@ -198,10 +198,12 @@ class _AppBarDemoScreenState extends State<AppBarDemoScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A),
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: const Color(0xFF00FF41).withOpacity(0.3)),
+        border: Border.all(
+          color: const Color(0xFF00FF41).withValues(alpha: 0.3),
+        ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00FF41).withOpacity(0.1),
+            color: const Color(0xFF00FF41).withValues(alpha: 0.1),
             blurRadius: 10,
             spreadRadius: 2,
           ),
@@ -264,7 +266,9 @@ class _AppBarDemoScreenState extends State<AppBarDemoScreen> {
                   icon: const Icon(Icons.skip_previous),
                   label: const Text('Anterior'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00FF41).withOpacity(0.2),
+                    backgroundColor: const Color(
+                      0xFF00FF41,
+                    ).withValues(alpha: 0.2),
                     foregroundColor: const Color(0xFF00FF41),
                   ),
                 ),
@@ -292,9 +296,11 @@ class _AppBarDemoScreenState extends State<AppBarDemoScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: const Color(0xFF00FF41).withOpacity(0.1),
+        color: const Color(0xFF00FF41).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFF00FF41).withOpacity(0.3)),
+        border: Border.all(
+          color: const Color(0xFF00FF41).withValues(alpha: 0.3),
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -377,7 +383,7 @@ class _AppBarDemoScreenState extends State<AppBarDemoScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -386,7 +392,7 @@ class _AppBarDemoScreenState extends State<AppBarDemoScreen> {
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
+              color: color.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(25),
             ),
             child: Icon(icon, color: color, size: 24),
@@ -440,7 +446,9 @@ class _AppBarDemoScreenState extends State<AppBarDemoScreen> {
         backgroundColor: const Color(0xFF1A1A1A),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
-          side: BorderSide(color: const Color(0xFF00FF41).withOpacity(0.3)),
+          side: BorderSide(
+            color: const Color(0xFF00FF41).withValues(alpha: 0.3),
+          ),
         ),
         title: Row(
           children: [

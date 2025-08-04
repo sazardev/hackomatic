@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import '../services/terminal_ui_service.dart';
 import '../services/sudo_auth_service.dart';
+import '../services/fast_credential_cache.dart';
 import '../widgets/terminal_display_widget.dart';
 import 'home_screen.dart';
+import 'dart:developer' as dev;
 
 /// Pantalla de inicialización avanzada con terminal visual completa
 class AdvancedInitializerScreen extends StatefulWidget {
@@ -579,6 +581,9 @@ class _AdvancedInitializerScreenState extends State<AdvancedInitializerScreen>
       backgroundColor: const Color(0xFF0A0A0A),
       body: Column(
         children: [
+          // 🚀 BOTÓN SKIP SÚPER VISIBLE
+          _buildSkipButton(),
+
           // Header con información del usuario y estadísticas
           _buildHeader(),
 
@@ -598,20 +603,160 @@ class _AdvancedInitializerScreenState extends State<AdvancedInitializerScreen>
     );
   }
 
+  /// 🚀 BOTÓN SKIP SÚPER VISIBLE PARA SALTAR TODO
+  Widget _buildSkipButton() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            const Color(0xFF00FF41).withValues(alpha: 0.2),
+            const Color(0xFF00FF41).withValues(alpha: 0.05),
+          ],
+        ),
+        border: Border(
+          bottom: BorderSide(
+            color: const Color(0xFF00FF41).withValues(alpha: 0.5),
+          ),
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.flash_on, color: const Color(0xFF00FF41), size: 24),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '⚡ MODO RÁPIDO DISPONIBLE',
+                  style: TextStyle(
+                    color: const Color(0xFF00FF41),
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Text(
+                  'Saltar configuración e ir directo a la aplicación',
+                  style: TextStyle(color: Colors.white70, fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          ElevatedButton.icon(
+            onPressed: _skipToApp,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF00FF41),
+              foregroundColor: Colors.black,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            icon: const Icon(Icons.rocket_launch, size: 20),
+            label: const Text(
+              'SALTAR',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 🚀 Método para saltar directo a la app
+  Future<void> _skipToApp() async {
+    // Mostrar confirmación rápida
+    final skip = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A1A),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+          side: BorderSide(
+            color: const Color(0xFF00FF41).withValues(alpha: 0.3),
+          ),
+        ),
+        title: Row(
+          children: [
+            Icon(Icons.rocket_launch, color: const Color(0xFF00FF41)),
+            const SizedBox(width: 10),
+            const Text('🚀 Modo Rápido', style: TextStyle(color: Colors.white)),
+          ],
+        ),
+        content: const Text(
+          '¿Saltar la configuración e ir directo a la aplicación?\n\n'
+          '✅ Se usarán las herramientas ya instaladas\n'
+          '⚡ Las credenciales en caché se mantendrán\n'
+          '🔥 Arranque súper rápido',
+          style: TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text(
+              'Cancelar',
+              style: TextStyle(color: Colors.white70),
+            ),
+          ),
+          ElevatedButton.icon(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF00FF41),
+              foregroundColor: Colors.black,
+            ),
+            icon: const Icon(Icons.rocket_launch, size: 16),
+            label: const Text('¡VAMOS!'),
+          ),
+        ],
+      ),
+    );
+
+    if (skip == true && mounted) {
+      // Cargar credenciales automáticamente si existen
+      await _loadCachedCredentials();
+
+      // Ir directo a HomeScreen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+      );
+    }
+  }
+
+  /// 🔐 Cargar credenciales en caché si existen
+  Future<void> _loadCachedCredentials() async {
+    try {
+      final cacheInfo = await FastCredentialCache.getCacheInfo();
+      if (cacheInfo['hasFileCache'] == true) {
+        final password = await FastCredentialCache.getCachedPassword();
+        if (password != null) {
+          dev.log('✅ Cached credentials loaded automatically');
+        }
+      }
+    } catch (e) {
+      dev.log('⚠️ Could not load cached credentials: $e');
+    }
+  }
+
   Widget _buildHeader() {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xFF00FF41).withOpacity(0.1),
+            const Color(0xFF00FF41).withValues(alpha: 0.1),
             Colors.transparent,
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
         border: Border(
-          bottom: BorderSide(color: const Color(0xFF00FF41).withOpacity(0.3)),
+          bottom: BorderSide(
+            color: const Color(0xFF00FF41).withValues(alpha: 0.3),
+          ),
         ),
       ),
       child: Column(
@@ -628,7 +773,7 @@ class _AdvancedInitializerScreenState extends State<AdvancedInitializerScreen>
                         BoxShadow(
                           color: const Color(
                             0xFF00FF41,
-                          ).withOpacity(0.3 * _glowAnimation.value),
+                          ).withValues(alpha: 0.3 * _glowAnimation.value),
                           blurRadius: 20,
                           spreadRadius: 5,
                         ),
@@ -680,7 +825,7 @@ class _AdvancedInitializerScreenState extends State<AdvancedInitializerScreen>
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF00FF41).withOpacity(0.1),
+                    color: const Color(0xFF00FF41).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: const Color(0xFF00FF41)),
                   ),
@@ -706,7 +851,9 @@ class _AdvancedInitializerScreenState extends State<AdvancedInitializerScreen>
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF00FF41).withOpacity(0.3)),
+        border: Border.all(
+          color: const Color(0xFF00FF41).withValues(alpha: 0.3),
+        ),
       ),
       child: Column(
         children: [
@@ -777,7 +924,9 @@ class _AdvancedInitializerScreenState extends State<AdvancedInitializerScreen>
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFF00FF41).withOpacity(0.3)),
+        border: Border.all(
+          color: const Color(0xFF00FF41).withValues(alpha: 0.3),
+        ),
       ),
       child: Column(
         children: [
@@ -818,7 +967,7 @@ class _AdvancedInitializerScreenState extends State<AdvancedInitializerScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: const Color(0xFF00FF41).withOpacity(0.1),
+        color: const Color(0xFF00FF41).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(

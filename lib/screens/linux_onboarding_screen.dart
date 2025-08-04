@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../services/linux_setup_service.dart';
 import '../utils/theme.dart';
 
@@ -100,7 +99,7 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
+      backgroundColor: HackomaticTheme.backgroundColor,
       body: FadeTransition(
         opacity: _fadeInAnimation,
         child: PageView(
@@ -133,11 +132,11 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
             width: 120,
             height: 120,
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor,
+              color: HackomaticTheme.primaryColor,
               borderRadius: BorderRadius.circular(60),
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.primaryColor.withOpacity(0.3),
+                  color: HackomaticTheme.primaryColor.withValues(alpha: 0.3),
                   blurRadius: 20,
                   spreadRadius: 5,
                 ),
@@ -150,7 +149,7 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
 
           Text(
             '¡Bienvenido a Hackomatic!',
-            style: AppTheme.titleLarge.copyWith(
+            style: HackomaticTheme.titleLarge.copyWith(
               fontSize: 32,
               fontWeight: FontWeight.bold,
             ),
@@ -161,8 +160,8 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
 
           Text(
             'Tu suite completa de hacking ético para Linux',
-            style: AppTheme.bodyLarge.copyWith(
-              color: AppTheme.textSecondary,
+            style: HackomaticTheme.bodyLarge.copyWith(
+              color: HackomaticTheme.textSecondary,
               fontSize: 18,
             ),
             textAlign: TextAlign.center,
@@ -182,7 +181,7 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
             child: ElevatedButton(
               onPressed: _nextPage,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryColor,
+                backgroundColor: HackomaticTheme.primaryColor,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -234,8 +233,8 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
               Expanded(
                 child: Text(
                   feature.substring(feature.indexOf(' ') + 1),
-                  style: AppTheme.bodyMedium.copyWith(
-                    color: AppTheme.textSecondary,
+                  style: HackomaticTheme.bodyMedium.copyWith(
+                    color: HackomaticTheme.textSecondary,
                     fontSize: 16,
                   ),
                 ),
@@ -254,13 +253,17 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.build_circle, size: 100, color: AppTheme.primaryColor),
+          Icon(
+            Icons.build_circle,
+            size: 100,
+            color: HackomaticTheme.primaryColor,
+          ),
 
           const SizedBox(height: 40),
 
           Text(
             'Preparación del Sistema',
-            style: AppTheme.titleLarge.copyWith(
+            style: HackomaticTheme.titleLarge.copyWith(
               fontSize: 28,
               fontWeight: FontWeight.bold,
             ),
@@ -271,8 +274,8 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
 
           Text(
             'Vamos a configurar tu sistema Linux para hacking ético',
-            style: AppTheme.bodyLarge.copyWith(
-              color: AppTheme.textSecondary,
+            style: HackomaticTheme.bodyLarge.copyWith(
+              color: HackomaticTheme.textSecondary,
               fontSize: 16,
             ),
             textAlign: TextAlign.center,
@@ -312,7 +315,7 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
                     });
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primaryColor,
+                    backgroundColor: HackomaticTheme.primaryColor,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
@@ -353,7 +356,7 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
       {
         'title': 'Package Manager',
         'description': 'Configurar gestor de paquetes (apt, dnf, pacman)',
-        'icon': Icons.package_2,
+        'icon': Icons.inventory_2,
       },
       {
         'title': 'Herramientas de Hacking',
@@ -377,11 +380,11 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
       children: preparations.map((prep) {
         return Card(
           margin: const EdgeInsets.symmetric(vertical: 8),
-          color: AppTheme.cardColor,
+          color: HackomaticTheme.cardColor,
           elevation: 4,
           child: ListTile(
             leading: CircleAvatar(
-              backgroundColor: AppTheme.primaryColor,
+              backgroundColor: HackomaticTheme.primaryColor,
               child: Icon(
                 prep['icon'] as IconData,
                 color: Colors.white,
@@ -390,12 +393,14 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
             ),
             title: Text(
               prep['title'] as String,
-              style: AppTheme.bodyLarge.copyWith(fontWeight: FontWeight.bold),
+              style: HackomaticTheme.bodyLarge.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             subtitle: Text(
               prep['description'] as String,
-              style: AppTheme.bodyMedium.copyWith(
-                color: AppTheme.textSecondary,
+              style: HackomaticTheme.bodyMedium.copyWith(
+                color: HackomaticTheme.textSecondary,
               ),
             ),
           ),
@@ -414,13 +419,23 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
           // Indicador de progreso
           if (_isSetupRunning)
             CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
+              valueColor: AlwaysStoppedAnimation<Color>(
+                HackomaticTheme.primaryColor,
+              ),
               strokeWidth: 6,
             )
           else if (_isSetupComplete)
-            Icon(Icons.check_circle, size: 100, color: AppTheme.successColor)
+            Icon(
+              Icons.check_circle,
+              size: 100,
+              color: HackomaticTheme.successColor,
+            )
           else
-            Icon(Icons.error_outline, size: 100, color: AppTheme.dangerColor),
+            Icon(
+              Icons.error_outline,
+              size: 100,
+              color: HackomaticTheme.dangerColor,
+            ),
 
           const SizedBox(height: 40),
 
@@ -430,14 +445,14 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
                 : _isSetupComplete
                 ? '¡Configuración Completada!'
                 : 'Error en Configuración',
-            style: AppTheme.titleLarge.copyWith(
+            style: HackomaticTheme.titleLarge.copyWith(
               fontSize: 24,
               fontWeight: FontWeight.bold,
               color: _isSetupRunning
-                  ? AppTheme.textPrimary
+                  ? HackomaticTheme.textPrimary
                   : _isSetupComplete
-                  ? AppTheme.successColor
-                  : AppTheme.dangerColor,
+                  ? HackomaticTheme.successColor
+                  : HackomaticTheme.dangerColor,
             ),
             textAlign: TextAlign.center,
           ),
@@ -447,8 +462,8 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
           if (_isSetupRunning)
             Text(
               'Por favor espera mientras configuramos tu sistema...',
-              style: AppTheme.bodyMedium.copyWith(
-                color: AppTheme.textSecondary,
+              style: HackomaticTheme.bodyMedium.copyWith(
+                color: HackomaticTheme.textSecondary,
               ),
               textAlign: TextAlign.center,
             ),
@@ -464,7 +479,7 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
                 color: Colors.black87,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: AppTheme.primaryColor.withOpacity(0.3),
+                  color: HackomaticTheme.primaryColor.withValues(alpha: 0.3),
                 ),
               ),
               child: SingleChildScrollView(
@@ -499,7 +514,7 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
                 child: ElevatedButton(
                   onPressed: _nextPage,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.successColor,
+                    backgroundColor: HackomaticTheme.successColor,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -538,7 +553,7 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
                     child: ElevatedButton(
                       onPressed: _runLinuxSetup,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primaryColor,
+                        backgroundColor: HackomaticTheme.primaryColor,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
@@ -573,11 +588,11 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
             width: 120,
             height: 120,
             decoration: BoxDecoration(
-              color: AppTheme.successColor,
+              color: HackomaticTheme.successColor,
               borderRadius: BorderRadius.circular(60),
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.successColor.withOpacity(0.3),
+                  color: HackomaticTheme.successColor.withValues(alpha: 0.3),
                   blurRadius: 20,
                   spreadRadius: 5,
                 ),
@@ -594,10 +609,10 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
 
           Text(
             '¡Todo Listo!',
-            style: AppTheme.titleLarge.copyWith(
+            style: HackomaticTheme.titleLarge.copyWith(
               fontSize: 32,
               fontWeight: FontWeight.bold,
-              color: AppTheme.successColor,
+              color: HackomaticTheme.successColor,
             ),
             textAlign: TextAlign.center,
           ),
@@ -606,8 +621,8 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
 
           Text(
             'Tu sistema Linux está configurado y listo para hacking ético',
-            style: AppTheme.bodyLarge.copyWith(
-              color: AppTheme.textSecondary,
+            style: HackomaticTheme.bodyLarge.copyWith(
+              color: HackomaticTheme.textSecondary,
               fontSize: 16,
             ),
             textAlign: TextAlign.center,
@@ -617,7 +632,7 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
 
           // Resumen de instalación
           Card(
-            color: AppTheme.cardColor,
+            color: HackomaticTheme.cardColor,
             elevation: 8,
             child: Padding(
               padding: const EdgeInsets.all(24),
@@ -628,14 +643,14 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
                     children: [
                       Text(
                         'Herramientas Instaladas:',
-                        style: AppTheme.bodyLarge.copyWith(
+                        style: HackomaticTheme.bodyLarge.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
                         '$installedCount/$totalCount',
-                        style: AppTheme.bodyLarge.copyWith(
-                          color: AppTheme.successColor,
+                        style: HackomaticTheme.bodyLarge.copyWith(
+                          color: HackomaticTheme.successColor,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -644,16 +659,18 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
                   const SizedBox(height: 16),
                   LinearProgressIndicator(
                     value: percentage / 100,
-                    backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
+                    backgroundColor: HackomaticTheme.primaryColor.withValues(
+                      alpha: 0.2,
+                    ),
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      AppTheme.successColor,
+                      HackomaticTheme.successColor,
                     ),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     '$percentage% completado',
-                    style: AppTheme.bodyMedium.copyWith(
-                      color: AppTheme.textSecondary,
+                    style: HackomaticTheme.bodyMedium.copyWith(
+                      color: HackomaticTheme.textSecondary,
                     ),
                   ),
                 ],
@@ -678,7 +695,7 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
                 Navigator.of(context).pushReplacementNamed('/home');
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryColor,
+                backgroundColor: HackomaticTheme.primaryColor,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -713,7 +730,9 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
       children: [
         Text(
           'Próximos Pasos:',
-          style: AppTheme.titleMedium.copyWith(fontWeight: FontWeight.bold),
+          style: HackomaticTheme.titleMedium.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: 16),
 
@@ -735,7 +754,7 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
       child: Row(
         children: [
           CircleAvatar(
-            backgroundColor: AppTheme.primaryColor,
+            backgroundColor: HackomaticTheme.primaryColor,
             radius: 16,
             child: Text(
               number,
@@ -747,9 +766,9 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
             ),
           ),
           const SizedBox(width: 16),
-          Icon(icon, color: AppTheme.primaryColor, size: 20),
+          Icon(icon, color: HackomaticTheme.primaryColor, size: 20),
           const SizedBox(width: 12),
-          Expanded(child: Text(text, style: AppTheme.bodyMedium)),
+          Expanded(child: Text(text, style: HackomaticTheme.bodyMedium)),
         ],
       ),
     );
@@ -767,8 +786,8 @@ class _LinuxOnboardingScreenState extends State<LinuxOnboardingScreen>
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: index == _currentPage
-                ? AppTheme.primaryColor
-                : AppTheme.primaryColor.withOpacity(0.3),
+                ? HackomaticTheme.primaryColor
+                : HackomaticTheme.primaryColor.withValues(alpha: 0.3),
           ),
         );
       }),

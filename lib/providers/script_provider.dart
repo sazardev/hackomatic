@@ -100,6 +100,11 @@ class ScriptProvider with ChangeNotifier {
         parameters: script.parameters,
         author: script.author,
         createdAt: script.createdAt,
+        difficulty: script.difficulty,
+        command: script.command,
+        tags: script.tags,
+        requiresSudo: script.requiresSudo,
+        estimatedTime: script.estimatedTime,
         isFavorite: !script.isFavorite,
       );
       await updateScript(updatedScript);

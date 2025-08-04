@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'dart:developer' as dev;
 
 /// Servicio especializado para configuración automática de Linux
 /// Enfocado en preparación completa del entorno de penetration testing
@@ -14,9 +15,9 @@ class LinuxAutoSetupService {
   bool _isSetupInProgress = false;
   String _currentStep = '';
   double _setupProgress = 0.0;
-  List<String> _installedTools = [];
-  List<String> _failedTools = [];
-  Map<String, String> _systemInfo = {};
+  final List<String> _installedTools = [];
+  final List<String> _failedTools = [];
+  final Map<String, String> _systemInfo = {};
 
   // Getters
   bool get isSetupComplete => _isSetupComplete;
@@ -182,7 +183,7 @@ class LinuxAutoSetupService {
       return true;
     } catch (e) {
       if (kDebugMode) {
-        print('Error during Linux setup: $e');
+        dev.log('Error during Linux setup: $e');
       }
       _isSetupInProgress = false;
       return false;
@@ -223,12 +224,12 @@ class LinuxAutoSetupService {
       }
 
       if (kDebugMode) {
-        print('🐧 Detected Linux: ${_systemInfo['pretty_name']}');
-        print('📦 Package manager: ${_systemInfo['package_manager']}');
+        dev.log('🐧 Detected Linux: ${_systemInfo['pretty_name']}');
+        dev.log('📦 Package manager: ${_systemInfo['package_manager']}');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('Error detecting Linux distribution: $e');
+        dev.log('Error detecting Linux distribution: $e');
       }
     }
   }
@@ -254,11 +255,11 @@ class LinuxAutoSetupService {
       }
 
       if (kDebugMode) {
-        print('✅ Package repositories updated');
+        dev.log('✅ Package repositories updated');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('⚠️ Failed to update repositories: $e');
+        dev.log('⚠️ Failed to update repositories: $e');
       }
     }
   }
@@ -286,7 +287,7 @@ class LinuxAutoSetupService {
         if (await _commandExists(toolInfo['command']!)) {
           _installedTools.add(toolName);
           if (kDebugMode) {
-            print('✅ ${toolInfo['name']} already installed');
+            dev.log('✅ ${toolInfo['name']} already installed');
           }
         } else {
           // Instalar herramienta
@@ -295,12 +296,12 @@ class LinuxAutoSetupService {
           if (success) {
             _installedTools.add(toolName);
             if (kDebugMode) {
-              print('✅ ${toolInfo['name']} installed successfully');
+              dev.log('✅ ${toolInfo['name']} installed successfully');
             }
           } else {
             _failedTools.add(toolName);
             if (kDebugMode) {
-              print('❌ Failed to install ${toolInfo['name']}');
+              dev.log('❌ Failed to install ${toolInfo['name']}');
             }
           }
         }
@@ -311,7 +312,7 @@ class LinuxAutoSetupService {
       } catch (e) {
         _failedTools.add(toolName);
         if (kDebugMode) {
-          print('❌ Error installing $toolName: $e');
+          dev.log('❌ Error installing $toolName: $e');
         }
       }
     }
@@ -369,11 +370,11 @@ class LinuxAutoSetupService {
       await _downloadWordlists('$homeDir/.hackomatic/wordlists');
 
       if (kDebugMode) {
-        print('✅ Directories and permissions configured');
+        dev.log('✅ Directories and permissions configured');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Error setting up directories: $e');
+        dev.log('❌ Error setting up directories: $e');
       }
     }
   }
@@ -449,11 +450,11 @@ class LinuxAutoSetupService {
       }
 
       if (kDebugMode) {
-        print('✅ Basic wordlists created');
+        dev.log('✅ Basic wordlists created');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Error downloading wordlists: $e');
+        dev.log('❌ Error downloading wordlists: $e');
       }
     }
   }
@@ -478,11 +479,11 @@ class LinuxAutoSetupService {
     _installedTools.addAll(workingTools);
 
     if (kDebugMode) {
-      print(
+      dev.log(
         '✅ Verification complete: ${workingTools.length}/${_essentialTools.length} tools working',
       );
       if (brokenTools.isNotEmpty) {
-        print('⚠️ Not working: ${brokenTools.join(', ')}');
+        dev.log('⚠️ Not working: ${brokenTools.join(', ')}');
       }
     }
   }
@@ -511,7 +512,7 @@ class LinuxAutoSetupService {
     _currentStep = step;
 
     if (kDebugMode) {
-      print('📊 Progress: ${progress.toStringAsFixed(1)}% - $step');
+      dev.log('📊 Progress: ${progress.toStringAsFixed(1)}% - $step');
     }
   }
 

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'dart:developer' as dev;
 
 /// Gestor de instaladores automáticos para herramientas específicas
 /// Enfoque en simplicidad y automatización completa
@@ -228,12 +229,12 @@ class LinuxAutoInstallerService {
         if (installCmd.isNotEmpty) {
           await Process.run('sudo', installCmd);
           if (kDebugMode) {
-            print('✅ $tool instalado');
+            dev.log('✅ $tool instalado');
           }
         }
       } catch (e) {
         if (kDebugMode) {
-          print('❌ Error instalando $tool: $e');
+          dev.log('❌ Error instalando $tool: $e');
         }
       }
     }
@@ -283,7 +284,7 @@ class LinuxAutoInstallerService {
       await _configureSudoers(user);
     } catch (e) {
       if (kDebugMode) {
-        print('Error configurando permisos: $e');
+        dev.log('Error configurando permisos: $e');
       }
     }
   }
@@ -317,7 +318,7 @@ $user ALL=(ALL) NOPASSWD: /usr/bin/masscan
       await tempFile.delete();
     } catch (e) {
       if (kDebugMode) {
-        print('Error configurando sudoers: $e');
+        dev.log('Error configurando sudoers: $e');
       }
     }
   }
@@ -339,7 +340,7 @@ $user ALL=(ALL) NOPASSWD: /usr/bin/masscan
       await _copySystemWordlists(wordlistsDir.path);
     } catch (e) {
       if (kDebugMode) {
-        print('Error descargando wordlists: $e');
+        dev.log('Error descargando wordlists: $e');
       }
     }
   }
@@ -358,7 +359,7 @@ $user ALL=(ALL) NOPASSWD: /usr/bin/masscan
       }
     } catch (e) {
       if (kDebugMode) {
-        print('Error descargando SecLists: $e');
+        dev.log('Error descargando SecLists: $e');
       }
     }
   }
@@ -628,7 +629,7 @@ end
       ]);
     } catch (e) {
       if (kDebugMode) {
-        print('Error configurando GDB: $e');
+        dev.log('Error configurando GDB: $e');
       }
     }
   }
@@ -656,7 +657,7 @@ end
       }
     } catch (e) {
       if (kDebugMode) {
-        print('Error en cleanup: $e');
+        dev.log('Error en cleanup: $e');
       }
     }
   }

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'dart:developer' as dev;
 
 class NetworkDetectionService {
   static final NetworkDetectionService _instance =
@@ -57,7 +58,7 @@ class NetworkDetectionService {
 
       return '192.168.1.100'; // Fallback por defecto
     } catch (e) {
-      print('Error detecting local IP: $e');
+      dev.log('Error detecting local IP: $e');
       return '192.168.1.100';
     }
   }
@@ -158,7 +159,7 @@ class NetworkDetectionService {
       }
       return '192.168.1.1';
     } catch (e) {
-      print('Error detecting gateway: $e');
+      dev.log('Error detecting gateway: $e');
       return '192.168.1.1';
     }
   }
@@ -245,7 +246,7 @@ class NetworkDetectionService {
 
       return 'wlan0'; // Fallback más común
     } catch (e) {
-      print('Error detecting WiFi interface: $e');
+      dev.log('Error detecting WiFi interface: $e');
       return 'wlan0';
     }
   }
@@ -335,7 +336,7 @@ class NetworkDetectionService {
 
       return 'eth0'; // Fallback
     } catch (e) {
-      print('Error detecting Ethernet interface: $e');
+      dev.log('Error detecting Ethernet interface: $e');
       return 'eth0';
     }
   }

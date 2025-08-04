@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer' as dev;
 
 /// Servicio de Terminal Visual para Hackomatic
 /// Proporciona experiencia de terminal hacker con vis  ) async {
@@ -48,7 +49,7 @@ class TerminalUIService {
       _isInitialized = true;
 
       if (kDebugMode) {
-        print('🖥️ Terminal UI Service initialized');
+        dev.log('🖥️ Terminal UI Service initialized');
       }
     } catch (e) {
       addErrorLine('Error inicializando terminal: $e');
@@ -399,7 +400,7 @@ class TerminalUIService {
     final filledWidth = (progress * width).round();
     final emptyWidth = width - filledWidth;
 
-    return '[' + '█' * filledWidth + '░' * emptyWidth + ']';
+    return '[${'█' * filledWidth}${'░' * emptyWidth}]';
   }
 
   /// Mostrar estadísticas de red

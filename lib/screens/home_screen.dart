@@ -85,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           border: Border(
             top: BorderSide(
-              color: const Color(0xFF00FF41).withOpacity(0.3),
+              color: const Color(0xFF00FF41).withValues(alpha: 0.3),
               width: 1,
             ),
           ),
@@ -101,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           selectedItemColor: const Color(0xFF00FF41),
-          unselectedItemColor: const Color(0xFF00FF41).withOpacity(0.5),
+          unselectedItemColor: const Color(0xFF00FF41).withValues(alpha: 0.5),
           selectedLabelStyle: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 12,
@@ -224,10 +224,10 @@ class DashboardTab extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: HackomaticTheme.primaryGreen.withOpacity(0.1),
+                color: HackomaticTheme.primaryGreen.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: HackomaticTheme.primaryGreen.withOpacity(0.3),
+                  color: HackomaticTheme.primaryGreen.withValues(alpha: 0.3),
                 ),
               ),
               child: Row(
@@ -336,10 +336,10 @@ class DashboardTab extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF00FF41).withOpacity(0.1),
+                      color: const Color(0xFF00FF41).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
                       border: Border.all(
-                        color: const Color(0xFF00FF41).withOpacity(0.3),
+                        color: const Color(0xFF00FF41).withValues(alpha: 0.3),
                       ),
                     ),
                     child: Row(

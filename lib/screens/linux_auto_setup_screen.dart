@@ -369,7 +369,9 @@ class _LinuxAutoSetupScreenState extends State<LinuxAutoSetupScreen>
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A),
         border: Border(
-          bottom: BorderSide(color: const Color(0xFF00FF41).withOpacity(0.3)),
+          bottom: BorderSide(
+            color: const Color(0xFF00FF41).withValues(alpha: 0.3),
+          ),
         ),
       ),
       child: Row(
@@ -400,7 +402,7 @@ class _LinuxAutoSetupScreenState extends State<LinuxAutoSetupScreen>
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: const Color(0xFF00FF41).withOpacity(0.2),
+                color: const Color(0xFF00FF41).withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: const Color(0xFF00FF41)),
               ),
@@ -439,7 +441,7 @@ class _LinuxAutoSetupScreenState extends State<LinuxAutoSetupScreen>
                   width: 120,
                   height: 120,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF00FF41).withOpacity(0.1),
+                    color: const Color(0xFF00FF41).withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                     border: Border.all(
                       color: const Color(0xFF00FF41),
@@ -484,7 +486,7 @@ class _LinuxAutoSetupScreenState extends State<LinuxAutoSetupScreen>
                   color: const Color(0xFF1A1A1A),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: const Color(0xFF00FF41).withOpacity(0.3),
+                    color: const Color(0xFF00FF41).withValues(alpha: 0.3),
                   ),
                 ),
                 child: const Column(
@@ -570,7 +572,9 @@ class _LinuxAutoSetupScreenState extends State<LinuxAutoSetupScreen>
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A),
         border: Border(
-          top: BorderSide(color: const Color(0xFF00FF41).withOpacity(0.3)),
+          top: BorderSide(
+            color: const Color(0xFF00FF41).withValues(alpha: 0.3),
+          ),
         ),
       ),
       child: Row(

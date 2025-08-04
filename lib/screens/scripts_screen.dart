@@ -64,8 +64,8 @@ class _ScriptsScreenState extends State<ScriptsScreen> {
                       scriptProvider.filterByCategory(category);
                     },
                     backgroundColor: HackomaticTheme.cardColor,
-                    selectedColor: HackomaticTheme.primaryGreen.withOpacity(
-                      0.3,
+                    selectedColor: HackomaticTheme.primaryGreen.withValues(
+                      alpha: 0.3,
                     ),
                     checkmarkColor: HackomaticTheme.primaryGreen,
                     labelStyle: TextStyle(
@@ -140,10 +140,14 @@ class _ScriptsScreenState extends State<ScriptsScreen> {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: HackomaticTheme.primaryGreen.withOpacity(0.1),
+                      color: HackomaticTheme.primaryGreen.withValues(
+                        alpha: 0.1,
+                      ),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: HackomaticTheme.primaryGreen.withOpacity(0.3),
+                        color: HackomaticTheme.primaryGreen.withValues(
+                          alpha: 0.3,
+                        ),
                       ),
                     ),
                     child: Icon(
@@ -236,8 +240,8 @@ class _ScriptsScreenState extends State<ScriptsScreen> {
                     tooltip: 'Quick Run',
                     style: IconButton.styleFrom(
                       foregroundColor: HackomaticTheme.primaryGreen,
-                      backgroundColor: HackomaticTheme.primaryGreen.withOpacity(
-                        0.1,
+                      backgroundColor: HackomaticTheme.primaryGreen.withValues(
+                        alpha: 0.1,
                       ),
                     ),
                   ),
@@ -583,30 +587,26 @@ class _ScriptsScreenState extends State<ScriptsScreen> {
                   ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 12),
-                ...autoParams.entries
-                    .map(
-                      (entry) => Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.auto_awesome,
-                              color: HackomaticTheme.primaryGreen,
-                              size: 16,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              '${entry.key}: ',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Expanded(child: Text(entry.value.toString())),
-                          ],
+                ...autoParams.entries.map(
+                  (entry) => Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.auto_awesome,
+                          color: HackomaticTheme.primaryGreen,
+                          size: 16,
                         ),
-                      ),
-                    )
-                    .toList(),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${entry.key}: ',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Expanded(child: Text(entry.value.toString())),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
             actions: [
@@ -690,11 +690,13 @@ class _ScriptsScreenState extends State<ScriptsScreen> {
                         padding: const EdgeInsets.all(12),
                         margin: const EdgeInsets.only(bottom: 16),
                         decoration: BoxDecoration(
-                          color: HackomaticTheme.primaryGreen.withOpacity(0.1),
+                          color: HackomaticTheme.primaryGreen.withValues(
+                            alpha: 0.1,
+                          ),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: HackomaticTheme.primaryGreen.withOpacity(
-                              0.3,
+                            color: HackomaticTheme.primaryGreen.withValues(
+                              alpha: 0.3,
                             ),
                           ),
                         ),
@@ -739,7 +741,7 @@ class _ScriptsScreenState extends State<ScriptsScreen> {
                           },
                         ),
                       );
-                    }).toList(),
+                    }),
                   ],
                 ),
               );

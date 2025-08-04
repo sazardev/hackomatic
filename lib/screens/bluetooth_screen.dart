@@ -276,8 +276,8 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: isConnected
-              ? HackomaticTheme.successColor.withOpacity(0.1)
-              : HackomaticTheme.primaryGreen.withOpacity(0.1),
+              ? HackomaticTheme.successColor.withValues(alpha: 0.1)
+              : HackomaticTheme.primaryGreen.withValues(alpha: 0.1),
           child: Icon(
             _getDeviceIcon(device),
             color: isConnected
@@ -305,7 +305,9 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: HackomaticTheme.primaryGreen.withOpacity(0.1),
+                      color: HackomaticTheme.primaryGreen.withValues(
+                        alpha: 0.1,
+                      ),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
@@ -325,7 +327,9 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: HackomaticTheme.successColor.withOpacity(0.1),
+                      color: HackomaticTheme.successColor.withValues(
+                        alpha: 0.1,
+                      ),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
@@ -366,7 +370,9 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
       decoration: BoxDecoration(
         color: HackomaticTheme.surfaceColor,
         border: Border(
-          top: BorderSide(color: HackomaticTheme.primaryGreen.withOpacity(0.3)),
+          top: BorderSide(
+            color: HackomaticTheme.primaryGreen.withValues(alpha: 0.3),
+          ),
         ),
       ),
       child: Row(

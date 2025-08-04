@@ -209,7 +209,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildWarningSection() {
     return Card(
-      color: HackomaticTheme.warningColor.withOpacity(0.1),
+      color: HackomaticTheme.warningColor.withValues(alpha: 0.1),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

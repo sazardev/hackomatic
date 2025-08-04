@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'network_detection_service.dart';
+import 'dart:developer' as dev;
 
 /// Servicio de integración específico por plataforma
 /// Maneja la configuración automática y preparación del entorno
@@ -30,7 +31,7 @@ class PlatformIntegrationService {
       }
       return true;
     } catch (e) {
-      print('Error initializing platform integration: $e');
+      dev.log('Error initializing platform integration: $e');
       return false;
     }
   }
@@ -46,14 +47,14 @@ class PlatformIntegrationService {
 
       // 3. Verificar herramientas disponibles
       final tools = await _networkService.getAvailableTools();
-      print('Android tools available: $tools');
+      dev.log('Android tools available: $tools');
 
       // 4. Configurar variables de entorno
       await _setupAndroidEnvironment();
 
       return true;
     } catch (e) {
-      print('Android initialization error: $e');
+      dev.log('Android initialization error: $e');
       return false;
     }
   }
@@ -63,18 +64,18 @@ class PlatformIntegrationService {
     try {
       // 1. Verificar herramientas de hacking disponibles
       final tools = await _networkService.getAvailableTools();
-      print('Linux tools available: $tools');
+      dev.log('Linux tools available: $tools');
 
       // 2. Verificar permisos
       final permissions = await _networkService.checkRequiredPermissions();
-      print('Linux permissions: $permissions');
+      dev.log('Linux permissions: $permissions');
 
       // 3. Preparar directorio de trabajo
       await _setupLinuxDirectories();
 
       return true;
     } catch (e) {
-      print('Linux initialization error: $e');
+      dev.log('Linux initialization error: $e');
       return false;
     }
   }
@@ -95,11 +96,11 @@ class PlatformIntegrationService {
         final dir = Directory(dirPath);
         if (!await dir.exists()) {
           await dir.create(recursive: true);
-          print('Created Android directory: $dirPath');
+          dev.log('Created Android directory: $dirPath');
         }
       }
     } catch (e) {
-      print('Error setting up Android directories: $e');
+      dev.log('Error setting up Android directories: $e');
     }
   }
 
@@ -120,11 +121,11 @@ class PlatformIntegrationService {
         final dir = Directory(dirPath);
         if (!await dir.exists()) {
           await dir.create(recursive: true);
-          print('Created Linux directory: $dirPath');
+          dev.log('Created Linux directory: $dirPath');
         }
       }
     } catch (e) {
-      print('Error setting up Linux directories: $e');
+      dev.log('Error setting up Linux directories: $e');
     }
   }
 
@@ -163,13 +164,13 @@ class PlatformIntegrationService {
           // Hacer ejecutable (en Android podría no ser necesario)
           await Process.run('chmod', ['+x', targetFile.path]);
 
-          print('Copied script to Android: $scriptName');
+          dev.log('Copied script to Android: $scriptName');
         } catch (e) {
-          print('Error copying script $scriptName: $e');
+          dev.log('Error copying script $scriptName: $e');
         }
       }
     } catch (e) {
-      print('Error copying scripts to Android: $e');
+      dev.log('Error copying scripts to Android: $e');
     }
   }
 
@@ -185,9 +186,9 @@ class PlatformIntegrationService {
       };
 
       // Estas variables se aplicarán en comandos específicos
-      print('Android environment configured: $env');
+      dev.log('Android environment configured: $env');
     } catch (e) {
-      print('Error setting up Android environment: $e');
+      dev.log('Error setting up Android environment: $e');
     }
   }
 
@@ -426,7 +427,7 @@ class PlatformIntegrationService {
         }
       }
     } catch (e) {
-      print('Platform readiness check failed: $e');
+      dev.log('Platform readiness check failed: $e');
       return false;
     }
   }
@@ -510,7 +511,7 @@ class PlatformIntegrationService {
         }
       }
     } catch (e) {
-      print('Cleanup error: $e');
+      dev.log('Cleanup error: $e');
     }
   }
 
@@ -524,12 +525,12 @@ class PlatformIntegrationService {
           final stat = await file.stat();
           if (stat.modified.isBefore(cutoffDate)) {
             await file.delete();
-            print('Deleted old file: ${file.path}');
+            dev.log('Deleted old file: ${file.path}');
           }
         }
       }
     } catch (e) {
-      print('Error cleaning old files: $e');
+      dev.log('Error cleaning old files: $e');
     }
   }
 }

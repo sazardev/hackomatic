@@ -57,7 +57,9 @@ class _TerminalDisplayWidgetState extends State<TerminalDisplayWidget> {
       decoration: BoxDecoration(
         color: const Color(0xFF0A0A0A),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFF00FF41).withOpacity(0.3)),
+        border: Border.all(
+          color: const Color(0xFF00FF41).withValues(alpha: 0.3),
+        ),
       ),
       child: Column(
         children: [
@@ -72,7 +74,7 @@ class _TerminalDisplayWidgetState extends State<TerminalDisplayWidget> {
               ),
               border: Border(
                 bottom: BorderSide(
-                  color: const Color(0xFF00FF41).withOpacity(0.3),
+                  color: const Color(0xFF00FF41).withValues(alpha: 0.3),
                 ),
               ),
             ),

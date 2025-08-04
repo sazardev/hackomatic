@@ -64,8 +64,8 @@ class _ToolsScreenState extends State<ToolsScreen> {
                       toolProvider.filterByCategory(category);
                     },
                     backgroundColor: HackomaticTheme.cardColor,
-                    selectedColor: HackomaticTheme.primaryGreen.withOpacity(
-                      0.3,
+                    selectedColor: HackomaticTheme.primaryGreen.withValues(
+                      alpha: 0.3,
                     ),
                     checkmarkColor: HackomaticTheme.primaryGreen,
                     labelStyle: TextStyle(
@@ -147,10 +147,14 @@ class _ToolsScreenState extends State<ToolsScreen> {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: HackomaticTheme.primaryGreen.withOpacity(0.1),
+                      color: HackomaticTheme.primaryGreen.withValues(
+                        alpha: 0.1,
+                      ),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: HackomaticTheme.primaryGreen.withOpacity(0.3),
+                        color: HackomaticTheme.primaryGreen.withValues(
+                          alpha: 0.3,
+                        ),
                       ),
                     ),
                     child: Icon(
@@ -179,8 +183,8 @@ class _ToolsScreenState extends State<ToolsScreen> {
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: HackomaticTheme.errorColor.withOpacity(
-                                    0.1,
+                                  color: HackomaticTheme.errorColor.withValues(
+                                    alpha: 0.1,
                                   ),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
@@ -215,8 +219,12 @@ class _ToolsScreenState extends State<ToolsScreen> {
                         ),
                         decoration: BoxDecoration(
                           color: tool.isInstalled
-                              ? HackomaticTheme.successColor.withOpacity(0.1)
-                              : HackomaticTheme.warningColor.withOpacity(0.1),
+                              ? HackomaticTheme.successColor.withValues(
+                                  alpha: 0.1,
+                                )
+                              : HackomaticTheme.warningColor.withValues(
+                                  alpha: 0.1,
+                                ),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(

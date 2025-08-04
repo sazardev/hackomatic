@@ -249,7 +249,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                 color: HackomaticTheme.backgroundColor,
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: HackomaticTheme.primaryGreen.withOpacity(0.3),
+                  color: HackomaticTheme.primaryGreen.withValues(alpha: 0.3),
                 ),
               ),
               child: task.status == TaskStatus.running
@@ -308,9 +308,11 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: HackomaticTheme.errorColor.withOpacity(0.1),
+        color: HackomaticTheme.errorColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: HackomaticTheme.errorColor.withOpacity(0.3)),
+        border: Border.all(
+          color: HackomaticTheme.errorColor.withValues(alpha: 0.3),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -342,7 +344,9 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       decoration: BoxDecoration(
         color: HackomaticTheme.surfaceColor,
         border: Border(
-          top: BorderSide(color: HackomaticTheme.primaryGreen.withOpacity(0.3)),
+          top: BorderSide(
+            color: HackomaticTheme.primaryGreen.withValues(alpha: 0.3),
+          ),
         ),
       ),
       child: Row(

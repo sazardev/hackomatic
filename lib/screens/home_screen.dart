@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../providers/tool_provider.dart';
 import '../providers/script_provider.dart';
 import '../providers/task_provider.dart';
-import '../providers/bluetooth_provider.dart';
 import '../providers/platform_provider.dart';
 import '../utils/theme.dart';
 import '../widgets/enhanced_custom_app_bar.dart';
@@ -647,14 +646,13 @@ class DashboardTab extends StatelessWidget {
   }
 
   void _startBluetoothScan(BuildContext context) {
-    final bluetoothProvider = Provider.of<BluetoothProvider>(
-      context,
-      listen: false,
+    // Bluetooth functionality temporarily disabled
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Bluetooth feature temporarily unavailable'),
+        backgroundColor: Colors.orange,
+      ),
     );
-    bluetoothProvider.startScan();
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Bluetooth scan started!')));
   }
 
   void _showLinuxSystemInfo(BuildContext context) {

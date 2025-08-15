@@ -235,7 +235,7 @@ class _ToolDetailScreenState extends State<ToolDetailScreen> {
     switch (param.type) {
       case 'select':
         return DropdownButtonFormField<String>(
-          value: _parameters[param.name],
+          initialValue: _parameters[param.name],
           decoration: InputDecoration(
             hintText: param.placeholder ?? 'Select ${param.label}',
           ),
@@ -261,7 +261,7 @@ class _ToolDetailScreenState extends State<ToolDetailScreen> {
               _parameters[param.name] = value;
             });
           },
-          activeColor: HackomaticTheme.primaryGreen,
+          activeThumbColor: HackomaticTheme.primaryGreen,
         );
 
       case 'number':

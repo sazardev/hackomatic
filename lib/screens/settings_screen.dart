@@ -135,7 +135,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       trailing: Switch(
         value: value,
         onChanged: onChanged,
-        activeColor: HackomaticTheme.primaryGreen,
+        activeThumbColor: HackomaticTheme.primaryGreen,
       ),
     );
   }

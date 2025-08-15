@@ -8,7 +8,7 @@ import 'screens/advanced_terminal_screen.dart';
 import 'providers/tool_provider.dart';
 import 'providers/script_provider.dart';
 import 'providers/task_provider.dart';
-import 'providers/bluetooth_provider.dart';
+// import 'providers/bluetooth_provider.dart';  // Temporarily disabled
 import 'providers/platform_provider.dart';
 import 'services/advanced_permissions_service.dart';
 import 'services/advanced_logging_service.dart';
@@ -29,7 +29,7 @@ class HackomaticApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ToolProvider()),
         ChangeNotifierProvider(create: (_) => ScriptProvider()),
         ChangeNotifierProvider(create: (_) => TaskProvider()),
-        ChangeNotifierProvider(create: (_) => BluetoothProvider()),
+        // ChangeNotifierProvider(create: (_) => BluetoothProvider()),  // Temporarily disabled
         ChangeNotifierProvider(create: (_) => PlatformProvider()),
         ChangeNotifierProvider(create: (_) => AdvancedTerminalService()),
       ],
